@@ -195,11 +195,11 @@ export default function App() {
       marginBottom: 28,
     },
     h1: {
-      maxWidth: 780,
+      maxWidth: 700,
       fontSize: "clamp(40px, 7vw, 85px)",
       lineHeight: 1.03,
       letterSpacing: "-0.07em",
-      fontWeight: 900,
+      fontWeight: 800,
       margin: 0,
     },
     heroCopy: {
