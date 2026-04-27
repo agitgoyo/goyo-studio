@@ -840,7 +840,9 @@ export default function App() {
                 <div className="service-content">
                   <div>
                     <small>01</small>
-                    <h3>강의 신청</h3>
+                    <a href="apply.html" class="apply-button">
+  강의 신청하기
+</a>
                     <p>SketchUp과 D5 기반의 건축 시각화 워크플로우를 실무자의 언어로 배웁니다.</p>
                   </div>
                   <a className="service-link" href="#contact">강의 문의하기 →</a>
@@ -913,7 +915,7 @@ export default function App() {
               <div>
                 <p>설계 협업, 렌더링 의뢰, 강의, 콘텐츠 협업을 제안하고 싶다면 편하게 연락주세요. 좋은 생각은 대화에서 시작된다고 믿습니다.</p>
                 <div className="contact-links">
-                  <a className="btn primary" href="mailto:hello@goyostudio.kr">메일 보내기</a>
+                  <a className="btn primary" href="mailto:agit.goyo@gmail.com">메일 보내기</a>
                   <a className="btn" href="https://www.instagram.com/agit_goyo/" target="_blank" rel="noreferrer">인스타그램</a>
                 </div>
               </div>
