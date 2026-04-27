@@ -179,7 +179,7 @@ export default function App() {
           line-height: .95;
           letter-spacing: -.06em;
           font-weight: 950;
-          color: var(--dark);
+          color: var(--white);
         }
 
         .hero-note {
@@ -672,11 +672,7 @@ export default function App() {
 
             <div className="hero-visual">
               <img className="hero-image" src="/images/ansan-reground-main.png" alt="Ansan Reground" />
-              <div className="hero-gradient" />
-              <div className="hero-note">
-                <strong>GOYO STUDIO</strong>
-                대표 이미지 영역입니다. /public/images 폴더에 이미지를 넣고 파일명만 바꾸면 됩니다.
-              </div>
+              
               <div className="hero-title-stack">GOYO<br />STUDIO</div>
             </div>
           </div>
