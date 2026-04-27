@@ -443,9 +443,10 @@ export default function App() {
 
         .service h3 {
           margin: 24px 0 12px;
-          font-size: clamp(30px, 3vw, 42px);
+          font-size: clamp(25px, 3vw, 42px);
           line-height: .98;
           letter-spacing: -.06em;
+          font-weight: 900;
         }
 
         .service p {
