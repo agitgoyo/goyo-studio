@@ -633,35 +633,35 @@ export default function App() {
         <section id="services" className="services">
           <div className="wrap">
             <div className="section-head">
-              <h2>What I Do</h2>
-              <p>포트폴리오 사이트는 단순 작품집이 아니라, 의뢰와 구매와 협업으로 연결되는 소개서 역할을 해야 합니다.</p>
+              <h2>SERVICES</h2>
+              <p>원하는 서비스를 신청하세요.</p>
             </div>
             <div className="service-grid">
               <article className="service">
                 <div>
                   <small>01</small>
-                  <h3>강의<br />신청</h3>
+                  <h3>강의 신청</h3>
                   <p>SketchUp과 D5 기반의 건축 시각화 워크플로우를 실무자의 언어로 배웁니다.</p>
                 </div>
               </article>
               <article className="service">
                 <div>
                   <small>02</small>
-                  <h3>PDF<br />파일</h3>
+                  <h3>PDF 파일</h3>
                   <p>렌더링 세팅, 표현법, 포트폴리오 구성법을 정리한 실전형 디지털 자료입니다.</p>
                 </div>
               </article>
               <article className="service">
                 <div>
                   <small>03</small>
-                  <h3>무료<br />자료</h3>
+                  <h3>무료 자료</h3>
                   <p>처음 시작하는 분들을 위한 체크리스트, 가이드, 렌더링 팁을 제공합니다.</p>
                 </div>
               </article>
               <article className="service">
                 <div>
                   <small>04</small>
-                  <h3>이미지 외주<br />신청</h3>
+                  <h3>이미지 외주 신청</h3>
                   <p>건축 투시도, 다이어그램, 컨셉 이미지, 프레젠테이션용 시각화를 의뢰할 수 있습니다.</p>
                 </div>
               </article>
