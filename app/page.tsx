@@ -380,6 +380,7 @@ export default function App() {
           line-height: .86;
           letter-spacing: -.08em;
           font-weight: 900;
+          font-family: pretenard;
         }
 
         .services .section-head p {
@@ -431,20 +432,21 @@ export default function App() {
 
         .service small {
           display: inline-flex;
-          width: 44px;
-          height: 44px;
+          width: 40px;
+          height: 40px;
+          font-size: 22px;
           align-items: center;
           justify-content: center;
           border-radius: 999px;
           background: var(--ink);
           color: var(--white);
-          font-weight: 950;
-          letter-spacing: .02em;
+          font-weight: 900;
+          letter-spacing: 0.02em;
         }
 
         .service h3 {
           margin: 24px 0 12px;
-          font-size: clamp(25px, 3vw, 42px);
+          font-size: clamp(20px, 3vw, 30px);
           line-height: .98;
           letter-spacing: -.06em;
           font-weight: 900;
