@@ -197,7 +197,7 @@ export default function App() {
     h1: {
       maxWidth: 700,
       fontSize: "40px",
-      lineHeight: 1.03,
+      lineHeight: 1.1,
       letterSpacing: "-0.07em",
       fontWeight: 800,
       margin: 0,
