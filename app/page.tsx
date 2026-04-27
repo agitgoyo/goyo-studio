@@ -621,7 +621,7 @@ export default function App() {
                 <div className="project-body">
                   <div>
                     <div className="project-meta">Competition · Lifestyle</div>
-                    <h3>High & Life</h3>
+                    <h3>Highend Life</h3>
                     <p>라이프스타일과 공간 경험을 결합한 공모전 작업. 프로그램, 이미지, 사용자 경험을 하나의 이야기로 엮습니다.</p>
                   </div>
                 </div>
@@ -630,44 +630,57 @@ export default function App() {
           </div>
         </section>
 
-        <section id="services" className="services">
-          <div className="wrap">
-            <div className="section-head">
-              <h2>SERVICES</h2>
-              <p>원하는 서비스를 신청하세요.</p>
-            </div>
-            <div className="service-grid">
-              <article className="service">
-                <div>
-                  <small>01</small>
-                  <h3>강의 신청</h3>
-                  <p>SketchUp과 D5 기반의 건축 시각화 워크플로우를 실무자의 언어로 배웁니다.</p>
-                </div>
-              </article>
-              <article className="service">
-                <div>
-                  <small>02</small>
-                  <h3>PDF 파일</h3>
-                  <p>렌더링 세팅, 표현법, 포트폴리오 구성법을 정리한 실전형 디지털 자료입니다.</p>
-                </div>
-              </article>
-              <article className="service">
-                <div>
-                  <small>03</small>
-                  <h3>무료 자료</h3>
-                  <p>처음 시작하는 분들을 위한 체크리스트, 가이드, 렌더링 팁을 제공합니다.</p>
-                </div>
-              </article>
-              <article className="service">
-                <div>
-                  <small>04</small>
-                  <h3>이미지 외주 신청</h3>
-                  <p>건축 투시도, 다이어그램, 컨셉 이미지, 프레젠테이션용 시각화를 의뢰할 수 있습니다.</p>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
+        <div className="service-grid">
+
+  <article className="service">
+    <img className="service-image" src="/images/service-lecture.jpg" />
+    <div className="service-content">
+      <div>
+        <small>01</small>
+        <h3>강의 신청</h3>
+        <p>SketchUp과 D5 기반의 건축 시각화 워크플로우를 실무자의 언어로 배웁니다.</p>
+      </div>
+      <a className="service-link" href="#contact">강의 문의하기 →</a>
+    </div>
+  </article>
+
+  <article className="service">
+    <img className="service-image" src="/images/service-pdf.jpg" />
+    <div className="service-content">
+      <div>
+        <small>02</small>
+        <h3>PDF 파일</h3>
+        <p>렌더링 세팅, 표현법, 포트폴리오 구성법을 정리한 실전형 디지털 자료입니다.</p>
+      </div>
+      <a className="service-link" href="#contact">자료 구매하기 →</a>
+    </div>
+  </article>
+
+  <article className="service">
+    <img className="service-image" src="/images/service-free.jpg" />
+    <div className="service-content">
+      <div>
+        <small>03</small>
+        <h3>무료 자료</h3>
+        <p>처음 시작하는 분들을 위한 체크리스트, 가이드, 렌더링 팁을 제공합니다.</p>
+      </div>
+      <a className="service-link" href="#contact">무료 자료 받기 →</a>
+    </div>
+  </article>
+
+  <article className="service">
+    <img className="service-image" src="/images/service-outsource.jpg" />
+    <div className="service-content">
+      <div>
+        <small>04</small>
+        <h3>이미지 외주 신청</h3>
+        <p>건축 투시도, 다이어그램, 컨셉 이미지, 프레젠테이션용 시각화를 의뢰할 수 있습니다.</p>
+      </div>
+      <a className="service-link" href="#contact">외주 문의하기 →</a>
+    </div>
+  </article>
+
+</div>
 
         <section id="profile">
           <div className="wrap profile-grid">
