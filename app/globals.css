@@ -24,3 +24,124 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.apply-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 20px;
+  background: #f6f3ee;
+  color: #1f1f1f;
+}
+
+.apply-card {
+  width: 100%;
+  max-width: 720px;
+  background: #fff;
+  border-radius: 28px;
+  padding: 48px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+}
+
+.apply-label {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #eee7dc;
+  font-size: 15px;
+  font-weight: 900;
+  
+}
+
+.apply-card h1 {
+  margin: 0 0 12px;
+  font-size: 36px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.apply-description {
+  margin: 0 0 36px;
+  color: #666;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ddd6cc;
+  border-radius: 16px;
+  padding: 16px;
+  font-size: 15px;
+  font-family: inherit;
+  background: #faf8f5;
+  outline: none;
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.submit-button {
+  width: 100%;
+  margin-top: 12px;
+  border: none;
+  border-radius: 999px;
+  padding: 18px 24px;
+  background: #1f1f1f;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.apply-notice {
+  margin-top: 18px;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .apply-card {
+    padding: 32px 22px;
+    border-radius: 22px;
+  }
+
+  .apply-card h1 {
+    font-size: 28px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -840,11 +840,11 @@ export default function App() {
                 <div className="service-content">
                   <div>
                     <small>01</small>
-                    <h3>D5렌더링 강의</h3>
+                    <h3>D5렌더링 강의 </h3>
 
                     <p>SketchUp과 D5 기반의 건축 시각화 워크플로우를 실무자의 언어로 배웁니다.</p>
                   </div>
-                  <a href="apply.html" className="apply-button">강의 신청하기 →</a>
+                  <a href="apply" className="service-link">강의 신청하기 →</a>
                 </div>
               </article>
 
@@ -880,7 +880,7 @@ export default function App() {
                     <h3>이미지 외주 신청</h3>
                     <p>건축 투시도, 다이어그램, 컨셉 이미지, 프레젠테이션용 시각화를 의뢰할 수 있습니다.</p>
                   </div>
-                  <a className="service-link" href="#contact">외주 문의하기 →</a>
+                  <a className="service-link" href="/image-request">외주 문의하기 →</a>
                 </div>
               </article>
             </div>
