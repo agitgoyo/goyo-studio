@@ -52,9 +52,9 @@ export default function App() {
         }
 
         .logo {
-          font-size: 17px;
+          font-size: 20px;
           font-weight: 900;
-          letter-spacing: .12em;
+          letter-spacing: .01em;
         }
 
         .nav-links {
@@ -179,7 +179,7 @@ export default function App() {
           line-height: .95;
           letter-spacing: -.06em;
           font-weight: 950;
-          color: var(--dark);
+          color: var(--white);
         }
 
         .hero-note {
@@ -491,6 +491,8 @@ export default function App() {
           font-size: clamp(34px, 5vw, 58px);
           line-height: 1;
           letter-spacing: -.06em;
+          font-weight: 900;
+        
         }
 
         .profile-card p {
@@ -681,7 +683,8 @@ export default function App() {
           <div className="wrap hero-grid">
             <div>
               <div className="eyebrow">Architect · Visualizer · Educator</div>
-              <h1>Design<br />with quiet<br />intensity.</h1>
+              <h1>GOYO<br />STUDIO</h1>
+            
               <p className="hero-desc">
                 고요스튜디오는 건축 설계, 공간 이미지, 렌더링 콘텐츠를 통해 생각이 있는 건축을 만들고 공유합니다.
                 설계자의 관점으로 공간을 읽고, 이미지로 설득합니다.
@@ -694,12 +697,8 @@ export default function App() {
 
             <div className="hero-visual">
               <img className="hero-image" src="/images/hero-main.jpg" alt="GOYO STUDIO 대표 이미지" />
-              <div className="hero-gradient" />
-              <div className="hero-note">
-                <strong>GOYO STUDIO</strong>
-                대표 이미지 영역입니다. 파일명은 hero-main.jpg 입니다.
-              </div>
-              <div className="hero-title-stack">GOYO<br />STUDIO</div>
+              
+                           <div className="hero-title-stack">Design with<br />quiet intensity</div>
             </div>
           </div>
         </section>
@@ -860,7 +859,7 @@ export default function App() {
             </div>
             <div className="profile-visual">
               <img className="profile-image" src="/images/profile-goyo.jpg" alt="GOYO profile" />
-              <span>Quiet but<br />not small.</span>
+              <span>Quiet but not small.</span>
             </div>
           </div>
         </section>
