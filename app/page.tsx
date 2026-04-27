@@ -179,7 +179,7 @@ export default function App() {
           line-height: .95;
           letter-spacing: -.06em;
           font-weight: 950;
-          color: var(--white);
+          color: var(--dark);
         }
 
         .hero-note {
@@ -300,24 +300,24 @@ export default function App() {
           min-height: 330px;
           background: linear-gradient(145deg, rgba(24,24,22,.1), rgba(24,24,22,.02)), repeating-linear-gradient(135deg, #d8cebd 0, #d8cebd 12px, #f7efe3 12px, #f7efe3 24px);
           position: relative;
+          overflow: hidden;
         }
 
         .thumb.dark {
-          background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.02)), radial-gradient(circle at 20% 20%, #7d684d 0, transparent 34%), #26231f;
+          background: #26231f;
         }
 
-        .thumb::after {
-          content: "IMAGE AREA";
-          position: absolute;
-          left: 22px;
-          bottom: 20px;
-          color: rgba(24,24,22,.55);
-          font-size: 12px;
-          letter-spacing: .14em;
-          font-weight: 900;
+        .thumb img {
+          width: 100%;
+          height: 100%;
+          min-height: 330px;
+          object-fit: cover;
+          transition: transform .3s ease;
         }
 
-        .thumb.dark::after { color: rgba(255,255,255,.48); }
+        .project:hover .thumb img {
+          transform: scale(1.04);
+        }
 
         .project-body {
           padding: 26px;
@@ -379,8 +379,6 @@ export default function App() {
           font-size: clamp(48px, 7vw, 96px);
           line-height: .86;
           letter-spacing: -.08em;
-          font-weight: 900;
-          font-family: pretenard;
         }
 
         .services .section-head p {
@@ -432,24 +430,23 @@ export default function App() {
 
         .service small {
           display: inline-flex;
-          width: 40px;
-          height: 40px;
-          font-size: 22px;
+          width: 64px;
+          height: 64px;
           align-items: center;
           justify-content: center;
           border-radius: 999px;
           background: var(--ink);
           color: var(--white);
-          font-weight: 900;
-          letter-spacing: 0.02em;
+          font-weight: 950;
+          font-size: 18px;
+          letter-spacing: .02em;
         }
 
         .service h3 {
           margin: 24px 0 12px;
-          font-size: clamp(20px, 3vw, 30px);
+          font-size: clamp(30px, 3vw, 42px);
           line-height: .98;
           letter-spacing: -.06em;
-          font-weight: 900;
         }
 
         .service p {
@@ -524,7 +521,8 @@ export default function App() {
           min-height: 500px;
           border-radius: 34px;
           border: 1px solid var(--line);
-          background: linear-gradient(145deg, rgba(24,24,22,.16), rgba(24,24,22,.02)), repeating-linear-gradient(135deg, #d8cebd 0, #d8cebd 16px, #f7efe3 16px, #f7efe3 32px);
+          position: relative;
+          overflow: hidden;
           display: flex;
           align-items: end;
           padding: 28px;
@@ -532,6 +530,29 @@ export default function App() {
           font-weight: 950;
           line-height: .96;
           letter-spacing: -.06em;
+          color: var(--white);
+          background: var(--dark);
+        }
+
+        .profile-image {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: .78;
+        }
+
+        .profile-visual::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.62) 100%);
+        }
+
+        .profile-visual span {
+          position: relative;
+          z-index: 1;
         }
 
         .contact { padding: 100px 0; }
@@ -629,6 +650,7 @@ export default function App() {
           }
           .project { min-height: auto; }
           .thumb { min-height: 260px; }
+          .thumb img { min-height: 260px; }
           .project-body,
           .profile-card,
           .service-content {
@@ -671,8 +693,12 @@ export default function App() {
             </div>
 
             <div className="hero-visual">
-              <img className="hero-image" src="/images/ansan-reground-main.png" alt="Ansan Reground" />
-              
+              <img className="hero-image" src="/images/hero-main.jpg" alt="GOYO STUDIO 대표 이미지" />
+              <div className="hero-gradient" />
+              <div className="hero-note">
+                <strong>GOYO STUDIO</strong>
+                대표 이미지 영역입니다. 파일명은 hero-main.jpg 입니다.
+              </div>
               <div className="hero-title-stack">GOYO<br />STUDIO</div>
             </div>
           </div>
@@ -706,7 +732,9 @@ export default function App() {
 
             <div className="project-grid">
               <article className="project wide">
-                <div className="thumb dark" />
+                <div className="thumb dark">
+                  <img src="/images/project-dokbongsan.jpg" alt="독봉산 웰빙공원" />
+                </div>
                 <div className="project-body">
                   <div>
                     <div className="project-meta">Public Design · Competition</div>
@@ -717,7 +745,9 @@ export default function App() {
               </article>
 
               <article className="project small">
-                <div className="thumb" />
+                <div className="thumb">
+                  <img src="/images/project-yeononjae.jpg" alt="연온재" />
+                </div>
                 <div className="project-body">
                   <div>
                     <div className="project-meta">Residential · Concept</div>
@@ -728,7 +758,9 @@ export default function App() {
               </article>
 
               <article className="project">
-                <div className="thumb" />
+                <div className="thumb">
+                  <img src="/images/project-tinyhouse.jpg" alt="Tiny House" />
+                </div>
                 <div className="project-body">
                   <div>
                     <div className="project-meta">Small House · Visualization</div>
@@ -739,7 +771,9 @@ export default function App() {
               </article>
 
               <article className="project">
-                <div className="thumb dark" />
+                <div className="thumb dark">
+                  <img src="/images/project-highandlife.jpg" alt="High & Life" />
+                </div>
                 <div className="project-body">
                   <div>
                     <div className="project-meta">Competition · Lifestyle</div>
@@ -824,7 +858,10 @@ export default function App() {
                 <div className="fact"><strong>Instagram</strong><span>@agit_goyo</span></div>
               </div>
             </div>
-            <div className="profile-visual">Quiet but<br />not small.</div>
+            <div className="profile-visual">
+              <img className="profile-image" src="/images/profile-goyo.jpg" alt="GOYO profile" />
+              <span>Quiet but<br />not small.</span>
+            </div>
           </div>
         </section>
 
