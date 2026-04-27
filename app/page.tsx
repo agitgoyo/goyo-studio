@@ -29,7 +29,10 @@ export default function App() {
         a { color: inherit; text-decoration: none; }
         img { max-width: 100%; display: block; }
 
-        .wrap { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+        .wrap {
+          width: min(1180px, calc(100% - 40px));
+          margin: 0 auto;
+        }
 
         header {
           position: sticky;
@@ -134,11 +137,13 @@ export default function App() {
         }
 
         .btn:hover { transform: translateY(-2px); }
+
         .btn.primary {
           background: var(--ink);
           color: var(--white);
           box-shadow: 0 18px 38px rgba(24,24,22,.16);
         }
+
         .btn.secondary { background: transparent; }
 
         .hero-visual {
@@ -338,41 +343,133 @@ export default function App() {
           letter-spacing: -.055em;
         }
 
-        .project p { margin: 0; color: var(--muted); word-break: keep-all; }
+        .project p {
+          margin: 0;
+          color: var(--muted);
+          word-break: keep-all;
+        }
 
-        .services { background: #e9e0d3; }
+        .services {
+          background: #e4d8c8;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .services::before {
+          content: "SERVICES";
+          position: absolute;
+          right: -18px;
+          top: 26px;
+          font-size: clamp(72px, 13vw, 180px);
+          line-height: 1;
+          font-weight: 950;
+          letter-spacing: -.08em;
+          color: rgba(24,24,22,.055);
+          pointer-events: none;
+        }
+
+        .services .section-head {
+          position: relative;
+          z-index: 1;
+          align-items: flex-start;
+          margin-bottom: 52px;
+        }
+
+        .services .section-head h2 {
+          font-size: clamp(48px, 7vw, 96px);
+          line-height: .86;
+          letter-spacing: -.08em;
+        }
+
+        .services .section-head p {
+          max-width: 520px;
+          padding-top: 12px;
+          font-size: 18px;
+          color: rgba(24,24,22,.68);
+        }
 
         .service-grid {
+          position: relative;
+          z-index: 1;
           display: grid;
           grid-template-columns: repeat(4, 1fr);
           gap: 18px;
         }
 
         .service {
-          min-height: 300px;
-          background: rgba(255,250,242,.72);
-          border: 1px solid var(--line);
-          border-radius: 30px;
+          min-height: 520px;
+          background: rgba(255,250,242,.9);
+          border: 1px solid rgba(24,24,22,.16);
+          border-radius: 34px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 22px 70px rgba(38,35,31,.08);
+          transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+
+        .service:hover {
+          transform: translateY(-10px);
+          box-shadow: 0 30px 90px rgba(38,35,31,.18);
+        }
+
+        .service-image {
+          width: 100%;
+          height: 220px;
+          object-fit: cover;
+          background: linear-gradient(145deg, rgba(24,24,22,.1), rgba(24,24,22,.02)), repeating-linear-gradient(135deg, #d8cebd 0, #d8cebd 12px, #f7efe3 12px, #f7efe3 24px);
+        }
+
+        .service-content {
           padding: 28px;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
+          flex: 1;
         }
 
         .service small {
-          color: var(--accent);
+          display: inline-flex;
+          width: 44px;
+          height: 44px;
+          align-items: center;
+          justify-content: center;
+          border-radius: 999px;
+          background: var(--ink);
+          color: var(--white);
           font-weight: 950;
-          letter-spacing: .12em;
+          letter-spacing: .02em;
         }
 
         .service h3 {
-          margin: 44px 0 14px;
-          font-size: 28px;
-          line-height: 1.15;
-          letter-spacing: -.045em;
+          margin: 24px 0 12px;
+          font-size: clamp(30px, 3vw, 42px);
+          line-height: .98;
+          letter-spacing: -.06em;
         }
 
-        .service p { margin: 0; color: var(--muted); word-break: keep-all; }
+        .service p {
+          margin: 0;
+          color: var(--muted);
+          word-break: keep-all;
+          font-size: 16px;
+          line-height: 1.72;
+        }
+
+        .service-link {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: fit-content;
+          min-height: 42px;
+          margin-top: 28px;
+          padding: 0 16px;
+          border-radius: 999px;
+          background: var(--ink);
+          color: var(--white);
+          font-size: 13px;
+          font-weight: 900;
+        }
 
         .profile-grid {
           display: grid;
@@ -395,7 +492,11 @@ export default function App() {
           letter-spacing: -.06em;
         }
 
-        .profile-card p { color: var(--muted); margin: 0 0 16px; word-break: keep-all; }
+        .profile-card p {
+          color: var(--muted);
+          margin: 0 0 16px;
+          word-break: keep-all;
+        }
 
         .facts {
           display: grid;
@@ -488,12 +589,21 @@ export default function App() {
 
         @media (max-width: 960px) {
           .nav-links { display: none; }
-          .hero-grid, .intro-grid, .profile-grid, .contact-box { grid-template-columns: 1fr; }
+          .hero-grid,
+          .intro-grid,
+          .profile-grid,
+          .contact-box {
+            grid-template-columns: 1fr;
+          }
           .hero { min-height: auto; }
           .hero-visual { min-height: 420px; }
           .section-head { display: block; }
           .section-head p { margin-top: 14px; }
-          .project, .project.wide, .project.small { grid-column: span 12; }
+          .project,
+          .project.wide,
+          .project.small {
+            grid-column: span 12;
+          }
           .service-grid { grid-template-columns: 1fr 1fr; }
         }
 
@@ -504,13 +614,25 @@ export default function App() {
           .hero { padding: 56px 0 54px; }
           section { padding: 62px 0; }
           h1 { font-size: clamp(52px, 18vw, 88px); }
-          .hero-actions, .contact-links { align-items: stretch; }
+          .hero-actions,
+          .contact-links {
+            align-items: stretch;
+          }
           .btn { width: 100%; }
-          .hero-visual, .profile-visual { min-height: 360px; }
+          .hero-visual,
+          .profile-visual {
+            min-height: 360px;
+          }
           .project { min-height: auto; }
           .thumb { min-height: 260px; }
-          .project-body, .profile-card, .service { padding: 24px; }
+          .project-body,
+          .profile-card,
+          .service-content {
+            padding: 24px;
+          }
           .service-grid { grid-template-columns: 1fr; }
+          .service { min-height: auto; }
+          .service-image { height: 240px; }
           .fact { flex-direction: column; gap: 4px; }
         }
       `}</style>
@@ -621,7 +743,7 @@ export default function App() {
                 <div className="project-body">
                   <div>
                     <div className="project-meta">Competition · Lifestyle</div>
-                    <h3>Highend Life</h3>
+                    <h3>High & Life</h3>
                     <p>라이프스타일과 공간 경험을 결합한 공모전 작업. 프로그램, 이미지, 사용자 경험을 하나의 이야기로 엮습니다.</p>
                   </div>
                 </div>
@@ -630,57 +752,64 @@ export default function App() {
           </div>
         </section>
 
-        <div className="service-grid">
+        <section id="services" className="services">
+          <div className="wrap">
+            <div className="section-head">
+              <h2>SERVICES</h2>
+              <p>필요한 서비스를 바로 신청할 수 있도록 구성했습니다. 강의, 자료, 무료 리소스, 이미지 외주까지 고요스튜디오의 핵심 수익 구조입니다.</p>
+            </div>
 
-  <article className="service">
-    <img className="service-image" src="/images/service-lecture.jpg" />
-    <div className="service-content">
-      <div>
-        <small>01</small>
-        <h3>강의 신청</h3>
-        <p>SketchUp과 D5 기반의 건축 시각화 워크플로우를 실무자의 언어로 배웁니다.</p>
-      </div>
-      <a className="service-link" href="#contact">강의 문의하기 →</a>
-    </div>
-  </article>
+            <div className="service-grid">
+              <article className="service">
+                <img className="service-image" src="/images/service-lecture.jpg" alt="강의 신청" />
+                <div className="service-content">
+                  <div>
+                    <small>01</small>
+                    <h3>강의 신청</h3>
+                    <p>SketchUp과 D5 기반의 건축 시각화 워크플로우를 실무자의 언어로 배웁니다.</p>
+                  </div>
+                  <a className="service-link" href="#contact">강의 문의하기 →</a>
+                </div>
+              </article>
 
-  <article className="service">
-    <img className="service-image" src="/images/service-pdf.jpg" />
-    <div className="service-content">
-      <div>
-        <small>02</small>
-        <h3>PDF 파일</h3>
-        <p>렌더링 세팅, 표현법, 포트폴리오 구성법을 정리한 실전형 디지털 자료입니다.</p>
-      </div>
-      <a className="service-link" href="#contact">자료 구매하기 →</a>
-    </div>
-  </article>
+              <article className="service">
+                <img className="service-image" src="/images/service-pdf.jpg" alt="PDF 파일" />
+                <div className="service-content">
+                  <div>
+                    <small>02</small>
+                    <h3>PDF 파일</h3>
+                    <p>렌더링 세팅, 표현법, 포트폴리오 구성법을 정리한 실전형 디지털 자료입니다.</p>
+                  </div>
+                  <a className="service-link" href="#contact">자료 구매하기 →</a>
+                </div>
+              </article>
 
-  <article className="service">
-    <img className="service-image" src="/images/service-free.jpg" />
-    <div className="service-content">
-      <div>
-        <small>03</small>
-        <h3>무료 자료</h3>
-        <p>처음 시작하는 분들을 위한 체크리스트, 가이드, 렌더링 팁을 제공합니다.</p>
-      </div>
-      <a className="service-link" href="#contact">무료 자료 받기 →</a>
-    </div>
-  </article>
+              <article className="service">
+                <img className="service-image" src="/images/service-free.jpg" alt="무료 자료" />
+                <div className="service-content">
+                  <div>
+                    <small>03</small>
+                    <h3>무료 자료</h3>
+                    <p>처음 시작하는 분들을 위한 체크리스트, 가이드, 렌더링 팁을 제공합니다.</p>
+                  </div>
+                  <a className="service-link" href="#contact">무료 자료 받기 →</a>
+                </div>
+              </article>
 
-  <article className="service">
-    <img className="service-image" src="/images/service-outsource.jpg" />
-    <div className="service-content">
-      <div>
-        <small>04</small>
-        <h3>이미지 외주 신청</h3>
-        <p>건축 투시도, 다이어그램, 컨셉 이미지, 프레젠테이션용 시각화를 의뢰할 수 있습니다.</p>
-      </div>
-      <a className="service-link" href="#contact">외주 문의하기 →</a>
-    </div>
-  </article>
-
-</div>
+              <article className="service">
+                <img className="service-image" src="/images/service-outsource.jpg" alt="이미지 외주 신청" />
+                <div className="service-content">
+                  <div>
+                    <small>04</small>
+                    <h3>이미지 외주 신청</h3>
+                    <p>건축 투시도, 다이어그램, 컨셉 이미지, 프레젠테이션용 시각화를 의뢰할 수 있습니다.</p>
+                  </div>
+                  <a className="service-link" href="#contact">외주 문의하기 →</a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
 
         <section id="profile">
           <div className="wrap profile-grid">
