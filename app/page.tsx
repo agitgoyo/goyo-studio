@@ -379,6 +379,7 @@ export default function App() {
           font-size: clamp(48px, 7vw, 96px);
           line-height: .86;
           letter-spacing: -.08em;
+          font-weight: 900;
         }
 
         .services .section-head p {
