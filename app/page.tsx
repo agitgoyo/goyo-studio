@@ -218,6 +218,7 @@ export default function App() {
           font-size: clamp(34px, 5vw, 64px);
           line-height: .98;
           letter-spacing: -.065em;
+          font-weight: 900;
         }
 
         .section-head p {
@@ -227,6 +228,39 @@ export default function App() {
           font-size: 16px;
           word-break: keep-all;
         }
+          .works-title-row {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.more-portfolio-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 0 24px;
+  margin-bottom: 4px;
+  border: 1px solid rgba(24,24,22,.18);
+  border-radius: 18px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 14px 36px rgba(38,35,31,.08);
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.more-portfolio-btn:hover {
+  transform: translateY(-3px);
+  background: var(--ink);
+  color: var(--white);
+}
 
         .intro {
           background: var(--dark);
@@ -380,6 +414,7 @@ export default function App() {
           font-size: clamp(48px, 7vw, 96px);
           line-height: .86;
           letter-spacing: -.08em;
+          
         }
 
         .services .section-head p {
@@ -727,8 +762,13 @@ export default function App() {
         <section id="works">
           <div className="wrap">
             <div className="section-head">
-              <h2>Selected<br />Works</h2>
-              <p>포트폴리오 프로젝트를 강한 첫인상과 설명 구조로 정리하는 섹션입니다. 이미지를 넣으면 바로 실제 포트폴리오처럼 작동합니다.</p>
+               <div className="works-title-row">
+                <h2>Selected<br />Works</h2>
+                <a className="more-portfolio-btn" href="https://agit-goyo.myportfolio.com/" target="_blank" rel="noreferrer">
+  MORE PORTFOLIO →
+</a>
+               </div>
+             
             </div>
 
             <div className="project-grid">
@@ -791,7 +831,7 @@ export default function App() {
           <div className="wrap">
             <div className="section-head">
               <h2>SERVICES</h2>
-              <p>필요한 서비스를 바로 신청할 수 있도록 구성했습니다. 강의, 자료, 무료 리소스, 이미지 외주까지 고요스튜디오의 핵심 수익 구조입니다.</p>
+              
             </div>
 
             <div className="service-grid">
