@@ -196,7 +196,7 @@ export default function App() {
     },
     h1: {
       maxWidth: 700,
-      fontSize: "clamp(40px, 7vw, 85px)",
+      fontSize: "40px",
       lineHeight: 1.03,
       letterSpacing: "-0.07em",
       fontWeight: 800,
