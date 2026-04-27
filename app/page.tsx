@@ -1,640 +1,713 @@
 import React from "react";
 
 export default function App() {
-  const services = [
-    {
-      icon: "🎓",
-      title: "강의 신청",
-      text: "SketchUp, D5 Render, 건축 시각화 워크플로우를 실무자의 언어로 배웁니다.",
-      link: "강의 보기",
-      href: "#contact",
-    },
-    {
-      icon: "📄",
-      title: "PDF 파일",
-      text: "렌더링 세팅, 표현법, 포트폴리오 구성법을 정리한 실전형 디지털 자료입니다.",
-      link: "PDF 둘러보기",
-      href: "#contact",
-    },
-    {
-      icon: "↓",
-      title: "무료 자료",
-      text: "처음 시작하는 분들을 위한 무료 가이드, 체크리스트, 렌더링 팁을 제공합니다.",
-      link: "무료 자료 받기",
-      href: "#free",
-    },
-    {
-      icon: "🖼",
-      title: "이미지 외주 신청",
-      text: "건축 투시도, 다이어그램, 컨셉 이미지, 프레젠테이션용 시각화를 의뢰할 수 있습니다.",
-      link: "외주 문의하기",
-      href: "#contact",
-    },
-  ];
-
-  const portfolio = [
-    {
-      number: "01",
-      label: "HOUSING",
-      category: "Housing / Rendering",
-      title: "Residential Visualization",
-      text: "다세대 주거 프로젝트의 분위기와 재료감을 시각적으로 설득하는 이미지 작업.",
-    },
-    {
-      number: "02",
-      label: "CONCEPT",
-      category: "Design / Concept",
-      title: "Competition Concept",
-      text: "공모전의 핵심 아이디어를 공간 구조와 이미지 언어로 정리한 컨셉 작업.",
-    },
-    {
-      number: "03",
-      label: "D5 STUDY",
-      category: "Education / Rendering",
-      title: "D5 Workflow Study",
-      text: "실무자가 빠르게 결과물을 개선할 수 있는 D5 렌더링 워크플로우 연구.",
-    },
-  ];
-
-  const fits = [
-    "렌더링 결과물이 늘 아쉬웠던 분",
-    "포트폴리오의 분위기와 완성도를 높이고 싶은 분",
-    "건축 콘텐츠와 시각화로 수익화를 시작하고 싶은 분",
-  ];
-
-  const styles: Record<string, React.CSSProperties> = {
-    page: {
-      minHeight: "100vh",
-      background: "#f5f1ea",
-      color: "#211d18",
-      fontFamily:
-        '-apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif',
-      lineHeight: 1.6,
-    },
-    header: {
-      position: "sticky",
-      top: 0,
-      zIndex: 50,
-      borderBottom: "1px solid rgba(33,29,24,0.12)",
-      background: "rgba(245,241,234,0.88)",
-      backdropFilter: "blur(18px)",
-    },
-    container: {
-      width: "min(1180px, calc(100% - 40px))",
-      margin: "0 auto",
-    },
-    nav: {
-      height: 72,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: 24,
-    },
-    logo: {
-      display: "flex",
-      alignItems: "center",
-      gap: 10,
-      fontWeight: 800,
-      letterSpacing: "-0.02em",
-    },
-    logoMark: {
-      width: 38,
-      height: 38,
-      borderRadius: "50%",
-      display: "grid",
-      placeItems: "center",
-      background: "#211d18",
-      color: "#f5f1ea",
-      fontWeight: 800,
-    },
-    navLinks: {
-      display: "flex",
-      alignItems: "center",
-      gap: 32,
-      fontSize: 14,
-      color: "rgba(33,29,24,0.65)",
-    },
-    link: {
-      color: "inherit",
-      textDecoration: "none",
-    },
-    button: {
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: 46,
-      padding: "0 22px",
-      borderRadius: 999,
-      border: "1px solid transparent",
-      background: "#211d18",
-      color: "#f5f1ea",
-      fontWeight: 800,
-      fontSize: 14,
-      textDecoration: "none",
-      whiteSpace: "nowrap",
-    },
-    secondaryButton: {
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: 46,
-      padding: "0 22px",
-      borderRadius: 999,
-      border: "1px solid rgba(33,29,24,0.12)",
-      background: "rgba(255,255,255,0.28)",
-      color: "#211d18",
-      fontWeight: 800,
-      fontSize: 14,
-      textDecoration: "none",
-      whiteSpace: "nowrap",
-    },
-    hero: {
-      position: "relative",
-      overflow: "hidden",
-      padding: "96px 0 88px",
-    },
-    heroGrid: {
-      position: "relative",
-      display: "grid",
-      gridTemplateColumns: "minmax(0, 1.05fr) minmax(320px, 0.95fr)",
-      gap: 64,
-      alignItems: "center",
-    },
-    blobOne: {
-      position: "absolute",
-      width: 440,
-      height: 440,
-      borderRadius: 999,
-      filter: "blur(70px)",
-      opacity: 0.7,
-      background: "rgba(201,166,107,0.35)",
-      right: -120,
-      top: -140,
-    },
-    blobTwo: {
-      position: "absolute",
-      width: 360,
-      height: 360,
-      borderRadius: 999,
-      filter: "blur(70px)",
-      opacity: 0.7,
-      background: "rgba(120,98,75,0.24)",
-      left: -120,
-      bottom: -160,
-    },
-    eyebrow: {
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 8,
-      padding: "9px 15px",
-      border: "1px solid rgba(33,29,24,0.12)",
-      borderRadius: 999,
-      background: "rgba(255,255,255,0.38)",
-      color: "rgba(33,29,24,0.65)",
-      fontSize: 14,
-      marginBottom: 28,
-    },
-    h1: {
-      maxWidth: 700,
-      fontSize: "40px",
-      lineHeight: 1.1,
-      letterSpacing: "-0.07em",
-      fontWeight: 800,
-      margin: 0,
-    },
-    heroCopy: {
-      maxWidth: 650,
-      marginTop: 28,
-      fontSize: 18,
-      lineHeight: 1.3,
-      color: "rgba(33,29,24,0.65)",
-      wordBreak: "keep-all",
-    },
-    actions: {
-      display: "flex",
-      gap: 12,
-      flexWrap: "wrap",
-      marginTop: 36,
-    },
-    heroCard: {
-      aspectRatio: "4 / 5",
-      borderRadius: 32,
-      padding: 16,
-      background: "#211d18",
-      boxShadow: "0 24px 80px rgba(33,29,24,0.14)",
-    },
-    heroCardInner: {
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      borderRadius: 24,
-      padding: 32,
-      color: "#fff",
-      background:
-        "linear-gradient(140deg, rgba(255,255,255,0.12), rgba(255,255,255,0)), linear-gradient(135deg, #d7c6ad 0%, #bba17b 45%, #5b4b3d 100%)",
-      overflow: "hidden",
-    },
-    label: {
-      display: "inline-flex",
-      width: "fit-content",
-      padding: "8px 14px",
-      borderRadius: 999,
-      background: "rgba(255,255,255,0.16)",
-      fontSize: 13,
-      color: "rgba(255,255,255,0.88)",
-    },
-    heroCardTitle: {
-      marginTop: 22,
-      fontSize: 48,
-      lineHeight: 1.04,
-      letterSpacing: "-0.05em",
-      fontWeight: 900,
-    },
-    statList: {
-      display: "grid",
-      gap: 12,
-    },
-    stat: {
-      padding: 16,
-      borderRadius: 18,
-      background: "rgba(255,255,255,0.16)",
-      backdropFilter: "blur(12px)",
-    },
-    section: {
-      padding: "88px 0",
-    },
-    sectionHead: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "flex-end",
-      gap: 32,
-      marginBottom: 44,
-    },
-    kicker: {
-      marginBottom: 12,
-      color: "#9b7a4d",
-      fontSize: 13,
-      fontWeight: 900,
-      letterSpacing: "0.2em",
-      textTransform: "uppercase",
-    },
-    sectionTitle: {
-      fontSize: "clamp(34px, 5vw, 56px)",
-      lineHeight: 1.14,
-      letterSpacing: "-0.06em",
-      fontWeight: 900,
-      wordBreak: "keep-all",
-      margin: 0,
-    },
-    sectionDesc: {
-      maxWidth: 560,
-      color: "rgba(33,29,24,0.65)",
-      fontSize: 17,
-      lineHeight: 1.8,
-      wordBreak: "keep-all",
-    },
-    aboutGrid: {
-      display: "grid",
-      gridTemplateColumns: "0.8fr 1.2fr",
-      gap: 64,
-    },
-    aboutText: {
-      display: "grid",
-      gap: 22,
-      color: "rgba(33,29,24,0.65)",
-      fontSize: 19,
-      lineHeight: 1.9,
-      wordBreak: "keep-all",
-    },
-    grid4: {
-      display: "grid",
-      gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-      gap: 18,
-    },
-    card: {
-      border: "1px solid rgba(33,29,24,0.12)",
-      borderRadius: 24,
-      background: "rgba(255,255,255,0.48)",
-      padding: 28,
-      boxShadow: "0 16px 50px rgba(33,29,24,0.04)",
-    },
-    icon: {
-      width: 52,
-      height: 52,
-      display: "grid",
-      placeItems: "center",
-      borderRadius: 18,
-      background: "#211d18",
-      color: "#f5f1ea",
-      fontSize: 24,
-      marginBottom: 24,
-      fontWeight: 900,
-    },
-    cardTitle: {
-      fontSize: 22,
-      margin: "0 0 12px",
-      letterSpacing: "-0.03em",
-    },
-    cardText: {
-      minHeight: 112,
-      color: "rgba(33,29,24,0.65)",
-      lineHeight: 1.75,
-      wordBreak: "keep-all",
-    },
-    cardLink: {
-      display: "inline-flex",
-      marginTop: 24,
-      fontWeight: 900,
-      fontSize: 14,
-      color: "#211d18",
-      textDecoration: "none",
-    },
-    freeBox: {
-      display: "grid",
-      gridTemplateColumns: "1fr 0.9fr",
-      gap: 48,
-      alignItems: "center",
-      borderRadius: 32,
-      background: "#211d18",
-      color: "#f5f1ea",
-      padding: 56,
-      boxShadow: "0 24px 80px rgba(33,29,24,0.14)",
-    },
-    freeDesc: {
-      maxWidth: 640,
-      color: "rgba(245,241,234,0.72)",
-      fontSize: 17,
-      lineHeight: 1.8,
-      wordBreak: "keep-all",
-    },
-    formCard: {
-      borderRadius: 24,
-      background: "rgba(255,255,255,0.1)",
-      padding: 28,
-    },
-    input: {
-      width: "100%",
-      height: 50,
-      border: "1px solid rgba(255,255,255,0.14)",
-      borderRadius: 999,
-      background: "rgba(255,255,255,0.1)",
-      color: "#fff",
-      padding: "0 18px",
-      outline: "none",
-      marginBottom: 12,
-    },
-    lightButton: {
-      width: "100%",
-      minHeight: 50,
-      borderRadius: 999,
-      border: "none",
-      background: "#f5f1ea",
-      color: "#211d18",
-      fontWeight: 900,
-      cursor: "pointer",
-    },
-    grid3: {
-      display: "grid",
-      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-      gap: 22,
-    },
-    portfolioCard: {
-      overflow: "hidden",
-      border: "1px solid rgba(33,29,24,0.12)",
-      borderRadius: 24,
-      background: "rgba(255,255,255,0.48)",
-    },
-    portfolioThumb: {
-      aspectRatio: "4 / 3",
-      padding: 22,
-      color: "#fff",
-      background:
-        "linear-gradient(140deg, rgba(255,255,255,0.12), rgba(255,255,255,0)), linear-gradient(135deg, #d4c0a0, #8d7356 52%, #2d261f)",
-    },
-    thumbFrame: {
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      border: "1px solid rgba(255,255,255,0.25)",
-      borderRadius: 20,
-      padding: 20,
-      fontWeight: 900,
-    },
-    portfolioBody: {
-      padding: 26,
-    },
-    category: {
-      color: "#9b7a4d",
-      fontSize: 14,
-      marginBottom: 8,
-    },
-    fitItem: {
-      border: "1px solid rgba(33,29,24,0.12)",
-      borderRadius: 24,
-      background: "rgba(255,255,255,0.42)",
-      padding: 28,
-      fontSize: 19,
-      fontWeight: 800,
-      lineHeight: 1.7,
-      wordBreak: "keep-all",
-    },
-    contact: {
-      textAlign: "center",
-      maxWidth: 860,
-      margin: "0 auto",
-    },
-    contactActions: {
-      display: "flex",
-      justifyContent: "center",
-      gap: 12,
-      flexWrap: "wrap",
-      marginTop: 38,
-    },
-    footer: {
-      borderTop: "1px solid rgba(33,29,24,0.12)",
-      padding: "28px 0",
-      color: "rgba(33,29,24,0.55)",
-      fontSize: 14,
-    },
-    footerInner: {
-      display: "flex",
-      justifyContent: "space-between",
-      gap: 20,
-      flexWrap: "wrap",
-    },
-  };
-
   return (
-    <div style={styles.page}>
-      <header style={styles.header}>
-        <div style={{ ...styles.container, ...styles.nav }}>
-          <a href="#" style={{ ...styles.logo, ...styles.link }}>
-            <span style={styles.logoMark}>考</span>
-            <span>GOYO STUDIO</span>
-          </a>
-          <nav style={styles.navLinks}>
-            <a href="#about" style={styles.link}>소개</a>
-            <a href="#portfolio" style={styles.link}>포트폴리오</a>
-            <a href="#services" style={styles.link}>서비스</a>
-            <a href="#contact" style={styles.link}>문의</a>
+    <>
+      <style>{`
+        :root {
+          --bg: #f4f1eb;
+          --paper: #fffaf2;
+          --ink: #181816;
+          --muted: #77736b;
+          --line: #ddd5c8;
+          --accent: #8b6f4e;
+          --dark: #26231f;
+          --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+          margin: 0;
+          font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+          background: var(--bg);
+          color: var(--ink);
+          line-height: 1.65;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        img { max-width: 100%; display: block; }
+
+        .wrap { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+
+        header {
+          position: sticky;
+          top: 0;
+          z-index: 30;
+          background: rgba(244, 241, 235, .82);
+          backdrop-filter: blur(18px);
+          border-bottom: 1px solid rgba(221, 213, 200, .75);
+        }
+
+        .nav {
+          height: 72px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 28px;
+        }
+
+        .logo {
+          font-size: 17px;
+          font-weight: 900;
+          letter-spacing: .12em;
+        }
+
+        .nav-links {
+          display: flex;
+          gap: 26px;
+          color: var(--muted);
+          font-size: 14px;
+        }
+
+        .nav-links a:hover { color: var(--ink); }
+
+        .nav-cta {
+          padding: 10px 16px;
+          border: 1px solid var(--ink);
+          border-radius: 999px;
+          font-weight: 800;
+          font-size: 14px;
+        }
+
+        .hero {
+          min-height: calc(100vh - 72px);
+          padding: 82px 0 72px;
+          display: flex;
+          align-items: center;
+        }
+
+        .hero-grid {
+          display: grid;
+          grid-template-columns: 1.05fr .95fr;
+          gap: 56px;
+          align-items: end;
+        }
+
+        .eyebrow {
+          display: inline-flex;
+          padding: 8px 12px;
+          border: 1px solid var(--line);
+          border-radius: 999px;
+          background: rgba(255,250,242,.65);
+          color: var(--accent);
+          font-size: 13px;
+          font-weight: 800;
+          margin-bottom: 26px;
+        }
+
+        h1 {
+          margin: 0;
+          font-size: clamp(54px, 8.8vw, 132px);
+          line-height: .88;
+          letter-spacing: -.085em;
+          font-weight: 950;
+        }
+
+        .hero-desc {
+          max-width: 680px;
+          margin: 30px 0 0;
+          color: var(--muted);
+          font-size: clamp(18px, 2vw, 22px);
+          letter-spacing: -.02em;
+          word-break: keep-all;
+        }
+
+        .hero-actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-top: 36px;
+        }
+
+        .btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 50px;
+          padding: 0 22px;
+          border-radius: 999px;
+          font-weight: 900;
+          border: 1px solid var(--ink);
+          transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+        .btn.primary {
+          background: var(--ink);
+          color: var(--white);
+          box-shadow: 0 18px 38px rgba(24,24,22,.16);
+        }
+        .btn.secondary { background: transparent; }
+
+        .hero-visual {
+          border-radius: 34px;
+          min-height: 560px;
+          background: linear-gradient(145deg, rgba(24,24,22,.08), rgba(24,24,22,.02)), repeating-linear-gradient(135deg, #dfd5c5 0, #dfd5c5 14px, #f7efe3 14px, #f7efe3 28px);
+          border: 1px solid var(--line);
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 32px 80px rgba(38,35,31,.14);
+        }
+
+        .hero-image {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          filter: saturate(1.05) contrast(1.02);
+        }
+
+        .hero-gradient {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(90deg, rgba(244,241,235,0.85) 0%, rgba(244,241,235,0.55) 28%, rgba(244,241,235,0.0) 55%);
+        }
+
+        .hero-title-stack {
+          position: absolute;
+          left: 26px;
+          bottom: 26px;
+          font-size: clamp(34px, 4vw, 54px);
+          line-height: .95;
+          letter-spacing: -.06em;
+          font-weight: 950;
+          color: var(--dark);
+        }
+
+        .hero-note {
+          position: absolute;
+          top: 24px;
+          right: 24px;
+          width: min(260px, calc(100% - 48px));
+          padding: 18px;
+          border-radius: 24px;
+          background: rgba(255,250,242,.82);
+          border: 1px solid var(--line);
+          backdrop-filter: blur(10px);
+          color: var(--muted);
+          font-size: 14px;
+        }
+
+        .hero-note strong {
+          display: block;
+          color: var(--ink);
+          font-size: 16px;
+          margin-bottom: 6px;
+        }
+
+        section { padding: 90px 0; }
+
+        .section-head {
+          display: flex;
+          justify-content: space-between;
+          align-items: end;
+          gap: 32px;
+          margin-bottom: 38px;
+        }
+
+        .section-head h2 {
+          margin: 0;
+          font-size: clamp(34px, 5vw, 64px);
+          line-height: .98;
+          letter-spacing: -.065em;
+        }
+
+        .section-head p {
+          max-width: 430px;
+          margin: 0;
+          color: var(--muted);
+          font-size: 16px;
+          word-break: keep-all;
+        }
+
+        .intro {
+          background: var(--dark);
+          color: var(--white);
+        }
+
+        .intro-grid {
+          display: grid;
+          grid-template-columns: .8fr 1.2fr;
+          gap: 48px;
+        }
+
+        .intro-title {
+          font-size: clamp(36px, 5vw, 68px);
+          line-height: 1.02;
+          letter-spacing: -.06em;
+          font-weight: 950;
+        }
+
+        .intro-copy {
+          color: #d2cabd;
+          font-size: clamp(19px, 2.2vw, 28px);
+          line-height: 1.52;
+          letter-spacing: -.035em;
+          word-break: keep-all;
+        }
+
+        .keyword-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-top: 34px;
+        }
+
+        .keyword {
+          padding: 8px 12px;
+          border: 1px solid rgba(255,255,255,.18);
+          border-radius: 999px;
+          color: #efe5d5;
+          font-size: 13px;
+          font-weight: 800;
+        }
+
+        .project-grid {
+          display: grid;
+          grid-template-columns: repeat(12, 1fr);
+          gap: 18px;
+        }
+
+        .project {
+          grid-column: span 6;
+          min-height: 520px;
+          border-radius: 34px;
+          overflow: hidden;
+          background: var(--paper);
+          border: 1px solid var(--line);
+          display: flex;
+          flex-direction: column;
+          transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .project:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 24px 60px rgba(38,35,31,.13);
+        }
+
+        .project.wide { grid-column: span 8; }
+        .project.small { grid-column: span 4; }
+
+        .thumb {
+          min-height: 330px;
+          background: linear-gradient(145deg, rgba(24,24,22,.1), rgba(24,24,22,.02)), repeating-linear-gradient(135deg, #d8cebd 0, #d8cebd 12px, #f7efe3 12px, #f7efe3 24px);
+          position: relative;
+        }
+
+        .thumb.dark {
+          background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.02)), radial-gradient(circle at 20% 20%, #7d684d 0, transparent 34%), #26231f;
+        }
+
+        .thumb::after {
+          content: "IMAGE AREA";
+          position: absolute;
+          left: 22px;
+          bottom: 20px;
+          color: rgba(24,24,22,.55);
+          font-size: 12px;
+          letter-spacing: .14em;
+          font-weight: 900;
+        }
+
+        .thumb.dark::after { color: rgba(255,255,255,.48); }
+
+        .project-body {
+          padding: 26px;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          flex: 1;
+          justify-content: space-between;
+        }
+
+        .project-meta {
+          color: var(--accent);
+          font-size: 12px;
+          font-weight: 900;
+          letter-spacing: .12em;
+          text-transform: uppercase;
+        }
+
+        .project h3 {
+          margin: 0;
+          font-size: clamp(26px, 3vw, 40px);
+          line-height: 1.04;
+          letter-spacing: -.055em;
+        }
+
+        .project p { margin: 0; color: var(--muted); word-break: keep-all; }
+
+        .services { background: #e9e0d3; }
+
+        .service-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 18px;
+        }
+
+        .service {
+          min-height: 300px;
+          background: rgba(255,250,242,.72);
+          border: 1px solid var(--line);
+          border-radius: 30px;
+          padding: 28px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+
+        .service small {
+          color: var(--accent);
+          font-weight: 950;
+          letter-spacing: .12em;
+        }
+
+        .service h3 {
+          margin: 44px 0 14px;
+          font-size: 28px;
+          line-height: 1.15;
+          letter-spacing: -.045em;
+        }
+
+        .service p { margin: 0; color: var(--muted); word-break: keep-all; }
+
+        .profile-grid {
+          display: grid;
+          grid-template-columns: .95fr 1.05fr;
+          gap: 28px;
+          align-items: stretch;
+        }
+
+        .profile-card {
+          background: var(--paper);
+          border: 1px solid var(--line);
+          border-radius: 34px;
+          padding: 34px;
+        }
+
+        .profile-card h2 {
+          margin: 0 0 22px;
+          font-size: clamp(34px, 5vw, 58px);
+          line-height: 1;
+          letter-spacing: -.06em;
+        }
+
+        .profile-card p { color: var(--muted); margin: 0 0 16px; word-break: keep-all; }
+
+        .facts {
+          display: grid;
+          gap: 10px;
+          margin-top: 28px;
+        }
+
+        .fact {
+          display: flex;
+          justify-content: space-between;
+          gap: 16px;
+          border-top: 1px solid var(--line);
+          padding-top: 12px;
+          color: var(--muted);
+          font-size: 14px;
+        }
+
+        .fact strong { color: var(--ink); }
+
+        .profile-visual {
+          min-height: 500px;
+          border-radius: 34px;
+          border: 1px solid var(--line);
+          background: linear-gradient(145deg, rgba(24,24,22,.16), rgba(24,24,22,.02)), repeating-linear-gradient(135deg, #d8cebd 0, #d8cebd 16px, #f7efe3 16px, #f7efe3 32px);
+          display: flex;
+          align-items: end;
+          padding: 28px;
+          font-size: clamp(34px, 4vw, 58px);
+          font-weight: 950;
+          line-height: .96;
+          letter-spacing: -.06em;
+        }
+
+        .contact { padding: 100px 0; }
+
+        .contact-box {
+          background: var(--ink);
+          color: var(--white);
+          border-radius: 44px;
+          padding: clamp(34px, 7vw, 78px);
+          display: grid;
+          grid-template-columns: 1fr .75fr;
+          gap: 40px;
+          align-items: end;
+        }
+
+        .contact-box h2 {
+          margin: 0;
+          font-size: clamp(42px, 7vw, 86px);
+          line-height: .95;
+          letter-spacing: -.07em;
+        }
+
+        .contact-box p {
+          color: #d2cabd;
+          margin: 0 0 26px;
+          font-size: 18px;
+          word-break: keep-all;
+        }
+
+        .contact-links {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+
+        .contact-box .btn {
+          border-color: rgba(255,255,255,.8);
+          color: var(--white);
+        }
+
+        .contact-box .btn.primary {
+          background: var(--white);
+          color: var(--ink);
+        }
+
+        footer {
+          padding: 34px 0;
+          border-top: 1px solid var(--line);
+          color: var(--muted);
+          font-size: 14px;
+        }
+
+        .footer-inner {
+          display: flex;
+          justify-content: space-between;
+          gap: 18px;
+          flex-wrap: wrap;
+        }
+
+        @media (max-width: 960px) {
+          .nav-links { display: none; }
+          .hero-grid, .intro-grid, .profile-grid, .contact-box { grid-template-columns: 1fr; }
+          .hero { min-height: auto; }
+          .hero-visual { min-height: 420px; }
+          .section-head { display: block; }
+          .section-head p { margin-top: 14px; }
+          .project, .project.wide, .project.small { grid-column: span 12; }
+          .service-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 560px) {
+          .wrap { width: min(100% - 28px, 1180px); }
+          .nav { height: 66px; }
+          .nav-cta { display: none; }
+          .hero { padding: 56px 0 54px; }
+          section { padding: 62px 0; }
+          h1 { font-size: clamp(52px, 18vw, 88px); }
+          .hero-actions, .contact-links { align-items: stretch; }
+          .btn { width: 100%; }
+          .hero-visual, .profile-visual { min-height: 360px; }
+          .project { min-height: auto; }
+          .thumb { min-height: 260px; }
+          .project-body, .profile-card, .service { padding: 24px; }
+          .service-grid { grid-template-columns: 1fr; }
+          .fact { flex-direction: column; gap: 4px; }
+        }
+      `}</style>
+
+      <header>
+        <div className="wrap nav">
+          <a className="logo" href="#">GOYO STUDIO</a>
+          <nav className="nav-links">
+            <a href="#works">Works</a>
+            <a href="#services">Services</a>
+            <a href="#profile">Profile</a>
+            <a href="#contact">Contact</a>
           </nav>
-          <a href="#services" style={styles.button}>시작하기</a>
+          <a className="nav-cta" href="#contact">문의하기</a>
         </div>
       </header>
 
       <main>
-        <section style={styles.hero}>
-          <div style={styles.blobOne} />
-          <div style={styles.blobTwo} />
-          <div style={{ ...styles.container, ...styles.heroGrid }}>
+        <section className="hero">
+          <div className="wrap hero-grid">
             <div>
-              <div style={styles.eyebrow}>✦ 건축가의 생각을 이미지와 교육으로 연결합니다</div>
-              <h1 style={styles.h1}>건축은 언제나 상상으로부터,<br />상상을 설득하는 즐거운 과정.</h1>
-              <p style={styles.heroCopy}>
-                고요스튜디오는 건축 설계, 시각화, 교육 콘텐츠를 기반으로 건축하는 사람들의 표현력과 실무 감각을 함께 키우는 브랜드입니다.
+              <div className="eyebrow">Architect · Visualizer · Educator</div>
+              <h1>Design<br />with quiet<br />intensity.</h1>
+              <p className="hero-desc">
+                고요스튜디오는 건축 설계, 공간 이미지, 렌더링 콘텐츠를 통해 생각이 있는 건축을 만들고 공유합니다.
+                설계자의 관점으로 공간을 읽고, 이미지로 설득합니다.
               </p>
-              <div style={styles.actions}>
-                <a href="#services" style={styles.button}>서비스 둘러보기 →</a>
-                <a href="#portfolio" style={styles.secondaryButton}>포트폴리오 보기</a>
+              <div className="hero-actions">
+                <a className="btn primary" href="#works">포트폴리오 보기</a>
+                <a className="btn secondary" href="#services">서비스 보기</a>
               </div>
             </div>
 
-            <div style={styles.heroCard}>
-              <div style={styles.heroCardInner}>
+            <div className="hero-visual">
+              <img className="hero-image" src="/images/ansan-reground-main.png" alt="Ansan Reground" />
+              <div className="hero-gradient" />
+              <div className="hero-note">
+                <strong>GOYO STUDIO</strong>
+                대표 이미지 영역입니다. /public/images 폴더에 이미지를 넣고 파일명만 바꾸면 됩니다.
+              </div>
+              <div className="hero-title-stack">GOYO<br />STUDIO</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="intro">
+          <div className="wrap intro-grid">
+            <div className="intro-title">생각을 구조로,<br />구조를 이미지로.</div>
+            <div>
+              <div className="intro-copy">
+                건축은 예쁜 이미지를 만드는 일이기 전에, 무엇을 중요하게 볼지 정하는 일이라고 생각합니다.
+                고요는 계획의 방향, 공간의 분위기, 표현의 완성도를 함께 다루는 건축 기반 크리에이티브 스튜디오입니다.
+              </div>
+              <div className="keyword-row">
+                <span className="keyword">Architecture Design</span>
+                <span className="keyword">Concept Planning</span>
+                <span className="keyword">3D Visualization</span>
+                <span className="keyword">SketchUp · D5</span>
+                <span className="keyword">Education</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="works">
+          <div className="wrap">
+            <div className="section-head">
+              <h2>Selected<br />Works</h2>
+              <p>포트폴리오 프로젝트를 강한 첫인상과 설명 구조로 정리하는 섹션입니다. 이미지를 넣으면 바로 실제 포트폴리오처럼 작동합니다.</p>
+            </div>
+
+            <div className="project-grid">
+              <article className="project wide">
+                <div className="thumb dark" />
+                <div className="project-body">
+                  <div>
+                    <div className="project-meta">Public Design · Competition</div>
+                    <h3>독봉산 웰빙공원</h3>
+                    <p>공공 공간의 경험과 풍경을 재구성하는 제안. 장소의 흐름, 이용자의 동선, 자연과 시설의 관계를 중심으로 계획합니다.</p>
+                  </div>
+                </div>
+              </article>
+
+              <article className="project small">
+                <div className="thumb" />
+                <div className="project-body">
+                  <div>
+                    <div className="project-meta">Residential · Concept</div>
+                    <h3>연온재</h3>
+                    <p>주거의 온도와 밀도를 다루는 프로젝트. 차분한 재료감과 생활의 장면을 중심으로 공간 이미지를 구성합니다.</p>
+                  </div>
+                </div>
+              </article>
+
+              <article className="project">
+                <div className="thumb" />
+                <div className="project-body">
+                  <div>
+                    <div className="project-meta">Small House · Visualization</div>
+                    <h3>Tiny House</h3>
+                    <p>작은 집이 가질 수 있는 밀도와 장면을 탐구한 작업. 제한된 규모 안에서 생활감과 분위기를 설계합니다.</p>
+                  </div>
+                </div>
+              </article>
+
+              <article className="project">
+                <div className="thumb dark" />
+                <div className="project-body">
+                  <div>
+                    <div className="project-meta">Competition · Lifestyle</div>
+                    <h3>High & Life</h3>
+                    <p>라이프스타일과 공간 경험을 결합한 공모전 작업. 프로그램, 이미지, 사용자 경험을 하나의 이야기로 엮습니다.</p>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="services" className="services">
+          <div className="wrap">
+            <div className="section-head">
+              <h2>What I Do</h2>
+              <p>포트폴리오 사이트는 단순 작품집이 아니라, 의뢰와 구매와 협업으로 연결되는 소개서 역할을 해야 합니다.</p>
+            </div>
+            <div className="service-grid">
+              <article className="service">
                 <div>
-                  <span style={styles.label}>ARCHITECTURE / VISUAL / EDUCATION</span>
-                  <div style={styles.heroCardTitle}>GOYO<br />STUDIO</div>
+                  <small>01</small>
+                  <h3>강의<br />신청</h3>
+                  <p>SketchUp과 D5 기반의 건축 시각화 워크플로우를 실무자의 언어로 배웁니다.</p>
                 </div>
-                <div style={styles.statList}>
-                  <div style={styles.stat}>✓ 10년차 건축사</div>
-                  <div style={styles.stat}>✓ 8,000+ 건축 커뮤니티</div>
-                  <div style={styles.stat}>✓ 설계·시각화·교육 통합</div>
+              </article>
+              <article className="service">
+                <div>
+                  <small>02</small>
+                  <h3>PDF<br />파일</h3>
+                  <p>렌더링 세팅, 표현법, 포트폴리오 구성법을 정리한 실전형 디지털 자료입니다.</p>
+                </div>
+              </article>
+              <article className="service">
+                <div>
+                  <small>03</small>
+                  <h3>무료<br />자료</h3>
+                  <p>처음 시작하는 분들을 위한 체크리스트, 가이드, 렌더링 팁을 제공합니다.</p>
+                </div>
+              </article>
+              <article className="service">
+                <div>
+                  <small>04</small>
+                  <h3>이미지 외주<br />신청</h3>
+                  <p>건축 투시도, 다이어그램, 컨셉 이미지, 프레젠테이션용 시각화를 의뢰할 수 있습니다.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="profile">
+          <div className="wrap profile-grid">
+            <div className="profile-card">
+              <h2>About<br />GOYO</h2>
+              <p>건축사 자격을 가진 10년차 실무자로, 설계와 이미지 사이를 오가며 작업합니다. 건축을 예술과 실무 사이의 언어로 바라보고, 생각이 분명한 공간을 만들고자 합니다.</p>
+              <p>@agit_goyo를 통해 SketchUp, D5 렌더링, 건축 모델링과 설계 콘텐츠를 공유하며 건축인들과 소통하고 있습니다.</p>
+              <div className="facts">
+                <div className="fact"><strong>Role</strong><span>Architect / Creator</span></div>
+                <div className="fact"><strong>Focus</strong><span>Design · Visualization · Education</span></div>
+                <div className="fact"><strong>Tools</strong><span>SketchUp · D5 Render · Photoshop</span></div>
+                <div className="fact"><strong>Instagram</strong><span>@agit_goyo</span></div>
+              </div>
+            </div>
+            <div className="profile-visual">Quiet but<br />not small.</div>
+          </div>
+        </section>
+
+        <section id="contact" className="contact">
+          <div className="wrap">
+            <div className="contact-box">
+              <h2>Let’s make<br />something<br />clear.</h2>
+              <div>
+                <p>설계 협업, 렌더링 의뢰, 강의, 콘텐츠 협업을 제안하고 싶다면 편하게 연락주세요. 좋은 생각은 대화에서 시작된다고 믿습니다.</p>
+                <div className="contact-links">
+                  <a className="btn primary" href="mailto:hello@goyostudio.kr">메일 보내기</a>
+                  <a className="btn" href="https://www.instagram.com/agit_goyo/" target="_blank" rel="noreferrer">인스타그램</a>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="about" style={styles.section}>
-          <div style={{ ...styles.container, ...styles.aboutGrid }}>
-            <div>
-              <p style={styles.kicker}>About</p>
-              <h2 style={styles.sectionTitle}>툴을 넘어,<br />생각을 전달하는 방식.</h2>
-            </div>
-            <div style={styles.aboutText}>
-              <p>
-                좋은 이미지는 단순히 예쁜 렌더링이 아니라, 설계자의 생각을 정확하게 전달하는 언어입니다. 고요스튜디오는 건축 실무 경험을 바탕으로 설계와 시각화, 교육을 하나의 흐름으로 다룹니다.
-              </p>
-              <p>
-                학생, 취준생, 실무자, 그리고 건축 콘텐츠를 필요로 하는 사람들에게 실질적인 방법과 결과물을 제공합니다. 어렵게 말하면 브랜드고, 쉽게 말하면 건축인의 비밀 아지트. 거의 치트키 상점입니다.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section id="services" style={styles.section}>
-          <div style={styles.container}>
-            <div style={styles.sectionHead}>
-              <div>
-                <p style={styles.kicker}>Services</p>
-                <h2 style={styles.sectionTitle}>필요한 순간에 바로 연결되는 서비스</h2>
-              </div>
-              <p style={styles.sectionDesc}>배우고, 내려받고, 의뢰하고, 함께 성장할 수 있는 구조로 설계했습니다.</p>
-            </div>
-
-            <div style={styles.grid4}>
-              {services.map((service) => (
-                <article key={service.title} style={styles.card}>
-                  <div style={styles.icon}>{service.icon}</div>
-                  <h3 style={styles.cardTitle}>{service.title}</h3>
-                  <p style={styles.cardText}>{service.text}</p>
-                  <a href={service.href} style={styles.cardLink}>{service.link} →</a>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="free" style={styles.section}>
-          <div style={styles.container}>
-            <div style={styles.freeBox}>
-              <div>
-                <p style={{ ...styles.kicker, color: "#c9a66b" }}>Free Resource</p>
-                <h2 style={styles.sectionTitle}>처음이라면 무료 자료부터 받아보세요.</h2>
-                <p style={styles.freeDesc}>
-                  D5 렌더링 기본 세팅, 포트폴리오 체크리스트, 이미지 퀄리티를 높이는 작은 습관들을 정리해 제공합니다. 무료 자료는 이후 강의와 PDF 구매로 자연스럽게 이어지는 입구입니다.
-                </p>
-              </div>
-              <div style={styles.formCard}>
-                <h3 style={{ marginTop: 0, marginBottom: 18, fontSize: 22 }}>무료 자료 신청</h3>
-                <input aria-label="이메일 주소" type="email" placeholder="이메일 주소" style={styles.input} />
-                <button type="button" style={styles.lightButton}>자료 받기 →</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="portfolio" style={styles.section}>
-          <div style={styles.container}>
-            <div style={styles.sectionHead}>
-              <div>
-                <p style={styles.kicker}>Portfolio</p>
-                <h2 style={styles.sectionTitle}>작업의 결과보다 먼저,<br />생각의 방향을 보여줍니다.</h2>
-              </div>
-            </div>
-
-            <div style={styles.grid3}>
-              {portfolio.map((item) => (
-                <article key={item.number} style={styles.portfolioCard}>
-                  <div style={styles.portfolioThumb}>
-                    <div style={styles.thumbFrame}>
-                      <span>{item.number}</span>
-                      <strong>{item.label}</strong>
-                    </div>
-                  </div>
-                  <div style={styles.portfolioBody}>
-                    <p style={styles.category}>{item.category}</p>
-                    <h3 style={styles.cardTitle}>{item.title}</h3>
-                    <p style={styles.sectionDesc}>{item.text}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section style={styles.section}>
-          <div style={{ ...styles.container, ...styles.grid3 }}>
-            {fits.map((fit) => (
-              <div key={fit} style={styles.fitItem}>✓ {fit}</div>
-            ))}
-          </div>
-        </section>
-
-        <section id="contact" style={styles.section}>
-          <div style={{ ...styles.container, ...styles.contact }}>
-            <p style={styles.kicker}>Contact</p>
-            <h2 style={styles.sectionTitle}>고요스튜디오와 함께 시작해볼까요?</h2>
-            <p style={{ ...styles.sectionDesc, margin: "22px auto 0" }}>
-              강의, 자료 구매, 이미지 외주, 협업 제안까지 편하게 문의해주세요. 생각만 들고 오셔도 됩니다. 나머지는 같이 그려보면 됩니다.
-            </p>
-            <div style={styles.contactActions}>
-              <a href="mailto:hello@goyostudio.kr" style={styles.button}>문의하기</a>
-              <a href="https://www.instagram.com/agit_goyo" target="_blank" rel="noreferrer" style={styles.secondaryButton}>@agit_goyo</a>
-              <a href="#services" style={styles.secondaryButton}>서비스 다시 보기</a>
             </div>
           </div>
         </section>
       </main>
 
-      <footer style={styles.footer}>
-        <div style={{ ...styles.container, ...styles.footerInner }}>
-          <p>© GOYO STUDIO. Architecture, Visual, Education.</p>
-          <p>생각할 고, 중요할 요. 건축에서 중요한 것은 결국 생각입니다.</p>
+      <footer>
+        <div className="wrap footer-inner">
+          <div>© GOYO STUDIO. All rights reserved.</div>
+          <div>Architecture · Visualization · Education</div>
         </div>
       </footer>
-    </div>
+    </>
   );
 }
