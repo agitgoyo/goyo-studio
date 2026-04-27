@@ -836,11 +836,11 @@ export default function App() {
 
             <div className="service-grid">
               <article className="service">
-                <img className="service-image" src="/images/service-lecture.jpg" alt="강의 신청" />
+                <img className="service-image" src="/images/service-lecture.jpg" alt="D5렌더링 강의" />
                 <div className="service-content">
                   <div>
                     <small>01</small>
-                    
+                    <h3>D5렌더링 강의</h3>
 
                     <p>SketchUp과 D5 기반의 건축 시각화 워크플로우를 실무자의 언어로 배웁니다.</p>
                   </div>
