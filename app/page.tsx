@@ -491,7 +491,7 @@ export default function App() {
           <div style={{ ...styles.container, ...styles.heroGrid }}>
             <div>
               <div style={styles.eyebrow}>✦ 건축가의 생각을 이미지와 교육으로 연결합니다</div>
-              <h1 style={styles.h1}>생각을 설계하고,<br />이미지를 만듭니다.</h1>
+              <h1 style={styles.h1}>건축은 언제나 상상으로부터,<br />상상을 설득하는 즐거운 과정.</h1>
               <p style={styles.heroCopy}>
                 고요스튜디오는 건축 설계, 시각화, 교육 콘텐츠를 기반으로 건축하는 사람들의 표현력과 실무 감각을 함께 키우는 브랜드입니다.
               </p>
