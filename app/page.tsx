@@ -551,7 +551,7 @@ export default function App() {
           border-top: 1px solid var(--line);
           padding-top: 12px;
           color: var(--muted);
-          font-size: 14px;
+          font-size: 18px;
         }
 
         .fact strong { color: var(--ink); }
