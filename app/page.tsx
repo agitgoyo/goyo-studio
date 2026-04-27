@@ -203,10 +203,10 @@ export default function App() {
       margin: 0,
     },
     heroCopy: {
-      maxWidth: 680,
+      maxWidth: 650,
       marginTop: 28,
-      fontSize: 20,
-      lineHeight: 1.85,
+      fontSize: 18,
+      lineHeight: 1.3,
       color: "rgba(33,29,24,0.65)",
       wordBreak: "keep-all",
     },
