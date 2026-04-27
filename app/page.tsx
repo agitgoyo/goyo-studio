@@ -341,6 +341,7 @@ export default function App() {
           font-size: clamp(26px, 3vw, 40px);
           line-height: 1.04;
           letter-spacing: -.055em;
+          font-weight: 700;
         }
 
         .project p {
@@ -444,9 +445,10 @@ export default function App() {
 
         .service h3 {
           margin: 24px 0 12px;
-          font-size: clamp(30px, 3vw, 42px);
+          font-size: clamp(25px, 3vw, 30px);
           line-height: .98;
           letter-spacing: -.06em;
+          font-weight: 700;
         }
 
         .service p {
@@ -776,7 +778,7 @@ export default function App() {
                 <div className="project-body">
                   <div>
                     <div className="project-meta">Competition · Lifestyle</div>
-                    <h3>High & Life</h3>
+                    <h3>High-end Life</h3>
                     <p>라이프스타일과 공간 경험을 결합한 공모전 작업. 프로그램, 이미지, 사용자 경험을 하나의 이야기로 엮습니다.</p>
                   </div>
                 </div>
