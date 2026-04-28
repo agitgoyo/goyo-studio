@@ -60,13 +60,14 @@ body {
   font-size: 36px;
   line-height: 1.25;
   letter-spacing: -0.02em;
+  font-weight: 700;
 }
 
 .apply-description {
   margin: 0 0 36px;
-  color: #666;
+  color: #383838;
   font-size: 16px;
-  line-height: 1.7;
+  line-height: 1.5;
 }
 
 .form-group {

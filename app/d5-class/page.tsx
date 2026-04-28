@@ -6,13 +6,13 @@ export default function D5ClassPage() {
       <section className="d5-hero">
         <div className="d5-hero-text">
           <p className="eyebrow">GOYO STUDIO · D5 RENDER CLASS</p>
-          <h1>
+        
 <h1>
   <span className="hero-line hero-white">건축 이미지는</span>
   <span className="hero-line hero-small">그냥 예쁜 이미지가 아니라</span>
   <span className="hero-line hero-point">설득용 이미지다</span>
 </h1>
-</h1>
+
           <p className="hero-desc">
             D5 Render를 활용해 단순히 보기 좋은 렌더링이 아니라,<br />
             내가 설계한 공간의 매력을 제대로 전달하는 이미지를 만드는 클래스입니다. <br />

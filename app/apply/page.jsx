@@ -9,8 +9,8 @@ export default function ApplyPage() {
         <p className="apply-description">
           안녕하세요. 고요입니다.<br />
           강의는 원데이 클래스로 하루 6시간 동안 진행됩니다.<br />
-          아래 정보를 작성해주시면 신청 내용을 확인한 뒤 개별 연락드립니다.<br />
-          소수 정예로 진행되는 강의라 신청 후 승인 및 결제 안내가 순차적으로 진행됩니다.<br />
+          아래 정보를 작성해주시고 원하시는 강의를 선택 후 결제 완료되면 수강신청이 완료됩니다.<br />
+          소수(정원8명)로 진행되는 강의라 신중한 신청 부탁드립니다.<br />
           감사합니다 :D
         </p>
 
@@ -87,12 +87,11 @@ export default function ApplyPage() {
           </div>
 
           <button type="submit" className="submit-button">
-            신청서 제출하기
+            결제하기
           </button>
 
           <p className="apply-notice">
-            신청서 제출은 수강 확정이 아닙니다.<br />
-            신청 내용을 확인한 뒤 개별 승인 및 결제 안내를 보내드립니다.<br />
+            
             정원은 기수별 8명이며, 결제 완료 순으로 최종 확정됩니다.
           </p>
         </form>
