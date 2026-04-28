@@ -145,8 +145,8 @@ export default function D5ClassPage() {
           <div className="class-card">
             <img src="/assets/d5-perspective.jpg" alt="초급반 투시도 예시" />
             <div className="class-content">
-              <p className="class-label">초급반 · 6시간 (10:00~17:00)</p>
-              <h3>투시도 만들기 - 5/15(금)</h3>
+              <p className="class-label">초급반 · 6시간 (10:00~17:00) · 24만원</p>
+              <h3>투시도 만들기 - 5/15(금)</h3><br />
               <p>
                 D5 Render를 처음 배우는 분들을 위한 클래스입니다. <br />기본
                 인터페이스부터 카메라, 재질, 빛, 주변 요소까지 익히고 최종적으로
@@ -160,7 +160,7 @@ export default function D5ClassPage() {
                 <li>최종 투시도 1장 완성</li>
               </ul>
               <div className="class-point">
-                추천 대상: D5를 처음 시작하는 분, 렌더링이 막막한 분, 빠르게
+                추천 대상: <br />D5를 처음 시작하는 분, <br />렌더링이 막막한 분,<br /> 빠르게
                 결과물을 만들고 싶은 분
               </div>
             </div>
@@ -169,10 +169,10 @@ export default function D5ClassPage() {
           <div className="class-card">
             <img src="/assets/d5-aerial.jpg" alt="중급반 조감도 예시" />
             <div className="class-content">
-              <p className="class-label">중급반 · 6시간 (10:00~17:00)</p>
-              <h3>조감도 만들기 - 5/22(금)</h3>
+              <p className="class-label">중급반 · 6시간 (10:00~17:00) · 24만원</p>
+              <h3>조감도 만들기 - 5/22(금)</h3><br />
               <p>
-                기본 렌더링은 할 수 있지만 이미지의 완성도를 더 높이고 싶은
+                이미지의 완성도를 더 높이고 싶은
                 분들을 위한 클래스입니다.<br /> 조감도의 목적, 환경 연출, 스케일감,
                 후반 보정까지 다룹니다.
               </p><br />
@@ -181,10 +181,10 @@ export default function D5ClassPage() {
                 <li>조감도 구도와 스토리텔링</li>
                 <li>환경, 날씨, 시간대 연출</li>
                 <li>Scatter / Brush 활용</li>
-                <li>포트폴리오용 조감도 1장 완성</li>
+                <li>포트폴리오용 조감도 1장 완성</li><br />
               </ul>
               <div className="class-point">
-                추천 대상: D5 기본은 아는 분, 조감도가 어려운 분, 포트폴리오
+                추천 대상:<br /> D5 기본은 아는 분,<br /> 조감도가 어려운 분,<br /> 포트폴리오
                 이미지를 업그레이드하고 싶은 분
               </div>
             </div>
