@@ -844,7 +844,7 @@ export default function App() {
 
                     <p>SketchUp과 D5 기반의 건축 시각화 워크플로우를 실무자의 언어로 배웁니다.</p>
                   </div>
-                  <a href="apply" className="service-link">강의 신청하기 →</a>
+                  <a href="d5-class" className="service-link">강의 신청하기 →</a>
                 </div>
               </article>
 
