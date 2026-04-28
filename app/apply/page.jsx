@@ -46,8 +46,8 @@ export default function ApplyPage() {
               <label htmlFor="classType">신청 강의 *</label>
               <select id="classType" name="classType" required>
                 <option value="">강의를 선택해주세요</option>
-                <option value="D5 Render 기초반">D5 Render 투시도반(초급)</option>
-                <option value="D5 Render 중급반">D5 Render 조감도반(중급)</option>
+                <option value="D5 Render 기초반">D5 Render 투시도(초급반)</option>
+                <option value="D5 Render 중급반">D5 Render 조감도(중급반)</option>
                 <option value="1:1 개인강의">1:1 개인강의</option>
                 <option value="그룹강의">그룹강의</option>
                 <option value="기업,학교강의">기업,학교강의</option>
