@@ -8,6 +8,7 @@ export default function ApplyPage() {
 
         <p className="apply-description">
           안녕하세요. 고요입니다.<br />
+          강의는 원데이 클래스로 하루 6시간 동안 진행됩니다.<br />
           아래 정보를 작성해주시면 신청 내용을 확인한 뒤 개별 연락드립니다.<br />
           소수 정예로 진행되는 강의라 신청 후 승인 및 결제 안내가 순차적으로 진행됩니다.<br />
           감사합니다 :D
@@ -46,11 +47,9 @@ export default function ApplyPage() {
               <label htmlFor="classType">신청 강의 *</label>
               <select id="classType" name="classType" required>
                 <option value="">강의를 선택해주세요</option>
-                <option value="D5 Render 기초반">D5 Render 투시도(초급반)</option>
-                <option value="D5 Render 중급반">D5 Render 조감도(중급반)</option>
-                <option value="1:1 개인강의">1:1 개인강의</option>
-                <option value="그룹강의">그룹강의</option>
-                <option value="기업,학교강의">기업,학교강의</option>
+                <option value="D5 Render 기초반">[ 05/15 ] D5 투시도(초급반) - 24만원</option>
+                <option value="D5 Render 중급반">[ 05/22 ] D5 조감도(중급반) - 24만원</option>
+                
               </select>
             </div>
 
@@ -92,8 +91,8 @@ export default function ApplyPage() {
           </button>
 
           <p className="apply-notice">
-            신청서 제출은 수강 확정이 아닙니다.
-            신청 내용을 확인한 뒤 개별 승인 및 결제 안내를 보내드립니다.
+            신청서 제출은 수강 확정이 아닙니다.<br />
+            신청 내용을 확인한 뒤 개별 승인 및 결제 안내를 보내드립니다.<br />
             정원은 기수별 8명이며, 결제 완료 순으로 최종 확정됩니다.
           </p>
         </form>

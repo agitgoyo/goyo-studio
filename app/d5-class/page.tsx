@@ -7,12 +7,12 @@ export default function D5ClassPage() {
         <div className="d5-hero-text">
           <p className="eyebrow">GOYO STUDIO · D5 RENDER CLASS</p>
           <h1>
-            건축 이미지는
-            <br />
-            예쁜 이미지가 아니라
-            <br />
-            <span>설득용 이미지다</span>
-          </h1>
+<h1>
+  <span className="hero-line hero-white">건축 이미지는</span>
+  <span className="hero-line hero-small">그냥 예쁜 이미지가 아니라</span>
+  <span className="hero-line hero-point">설득용 이미지다</span>
+</h1>
+</h1>
           <p className="hero-desc">
             D5 Render를 활용해 단순히 보기 좋은 렌더링이 아니라,<br />
             내가 설계한 공간의 매력을 제대로 전달하는 이미지를 만드는 클래스입니다. <br />
@@ -145,8 +145,8 @@ export default function D5ClassPage() {
           <div className="class-card">
             <img src="/assets/d5-perspective.jpg" alt="초급반 투시도 예시" />
             <div className="class-content">
-              <p className="class-label">초급반 · 6시간</p>
-              <h3>투시도 만들기</h3>
+              <p className="class-label">초급반 · 6시간 (10:00~17:00)</p>
+              <h3>투시도 만들기 - 5/15(금)</h3>
               <p>
                 D5 Render를 처음 배우는 분들을 위한 클래스입니다. <br />기본
                 인터페이스부터 카메라, 재질, 빛, 주변 요소까지 익히고 최종적으로
@@ -169,8 +169,8 @@ export default function D5ClassPage() {
           <div className="class-card">
             <img src="/assets/d5-aerial.jpg" alt="중급반 조감도 예시" />
             <div className="class-content">
-              <p className="class-label">중급반 · 6시간</p>
-              <h3>조감도 만들기</h3>
+              <p className="class-label">중급반 · 6시간 (10:00~17:00)</p>
+              <h3>조감도 만들기 - 5/22(금)</h3>
               <p>
                 기본 렌더링은 할 수 있지만 이미지의 완성도를 더 높이고 싶은
                 분들을 위한 클래스입니다.<br /> 조감도의 목적, 환경 연출, 스케일감,
@@ -232,15 +232,15 @@ export default function D5ClassPage() {
         <div className="result-grid">
           <div className="result-card">
             <h3>01. 결과물</h3>
-            <p>단순 기능 학습이 아니라, 바로 보여줄 수 있는 이미지 한 장을 완성합니다.</p>
+            <p>단순 기능 학습이 아니라, <br />바로 보여줄 수 있는 이미지 한 장을 완성합니다.</p>
           </div>
           <div className="result-card">
             <h3>02. 감각</h3>
-            <p>구도, 여백, 빛, 분위기를 보는 눈을 함께 훈련합니다.</p>
+            <p>구도, 여백, 빛, 분위기를 보는 눈을 <br />함께 훈련합니다.</p>
           </div>
           <div className="result-card">
             <h3>03. 워크플로우</h3>
-            <p>모델링에서 렌더링, 보정까지 실제 실무 흐름으로 배웁니다.</p>
+            <p>모델링에서 렌더링, 보정까지 <br />실제 실무 흐름으로 배웁니다.</p>
           </div>
         </div>
       </section>
@@ -249,7 +249,7 @@ export default function D5ClassPage() {
         <p className="eyebrow">IMAGE MOOD</p>
         <h2>이런 이미지를 만들 수 있게 됩니다.</h2>
         <p>
-          수업에서는 단순히 버튼을 따라 누르는 것이 아니라, 왜 이 구도를
+          수업에서는 단순히 버튼을 따라 누르는 것이 아니라, <br />왜 이 구도를
           선택하는지, 왜 이 빛을 쓰는지, 왜 이 분위기가 어울리는지 함께 설명합니다.
         </p>
 
@@ -269,7 +269,7 @@ export default function D5ClassPage() {
           직접 설득력 있게 보여주세요.
         </h2>
         <p>
-          초급반은 투시도, 중급반은 조감도 중심으로 진행됩니다. 신청 후 일정과
+          초급반은 투시도, 중급반은 조감도 중심으로 진행됩니다. <br />신청 후 일정과
           준비사항을 안내드립니다.
         </p>
         <a href="/apply" className="btn btn-primary">강의 신청하기</a>
