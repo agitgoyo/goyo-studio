@@ -216,3 +216,27 @@ body {
   text-decoration: none;
   font-size: 13px;
 }
+
+@media (max-width: 640px) {
+  p {
+    font-size: 15px;
+    line-height: 1.75;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  .apply-description,
+  .hero-desc,
+  .section-desc,
+  .class-desc {
+    text-align: left;
+    word-break: keep-all;
+    line-height: 1.8;
+  }
+
+  .apply-description br,
+  .hero-desc br,
+  .class-desc br {
+    display: none;
+  }
+}
