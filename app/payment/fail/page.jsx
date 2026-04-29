@@ -1,8 +1,17 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function PaymentFailPage() {
+  return (
+    <Suspense fallback={<PaymentFailLoading />}>
+      <PaymentFailContent />
+    </Suspense>
+  );
+}
+
+function PaymentFailContent() {
   const searchParams = useSearchParams();
 
   const code = searchParams.get("code");
@@ -30,6 +39,17 @@ export default function PaymentFailPage() {
         <a href="/apply" style={styles.button}>
           다시 결제하기
         </a>
+      </section>
+    </main>
+  );
+}
+
+function PaymentFailLoading() {
+  return (
+    <main style={styles.page}>
+      <section style={styles.card}>
+        <p style={styles.label}>PAYMENT FAILED</p>
+        <h1 style={styles.title}>결제 정보를 확인 중입니다.</h1>
       </section>
     </main>
   );
