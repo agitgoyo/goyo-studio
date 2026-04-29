@@ -108,8 +108,7 @@ export default function ApplyPage() {
         message: String(message),
       });
 
-      const siteUrl =
-        process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      const siteUrl = window.location.origin;;
 
       await payment.requestPayment({
         method: "CARD",

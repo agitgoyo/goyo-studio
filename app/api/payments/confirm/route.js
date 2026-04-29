@@ -140,29 +140,40 @@ export async function POST(request) {
     // Google Apps Script 메일 발송
     const googleScriptUrl = process.env.GOOGLE_SCRIPT_URL;
 
-    if (googleScriptUrl) {
-      await fetch(googleScriptUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          name: name || "",
-          phone: phone || "",
-          email: email || "",
-          classType: classType || "",
-          job: job || "",
-          level: level || "",
-          message: message || "",
-          paymentStatus: "결제 완료",
-          orderId: paymentData.orderId || orderId,
-          paymentKey: paymentData.paymentKey || paymentKey,
-          amount: String(paymentData.totalAmount || amount),
-          method: paymentData.method || "",
-          approvedAt: paymentData.approvedAt || "",
-        }),
-      });
-    }
+if (googleScriptUrl) {
+  const mailResponse = await fetch(googleScriptUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      name: name || "",
+      phone: phone || "",
+      email: email || "",
+      classType: classType || "",
+      job: job || "",
+      level: level || "",
+      message: message || "",
+      paymentStatus: "결제 완료",
+      orderId: paymentData.orderId || orderId,
+      paymentKey: paymentData.paymentKey || paymentKey,
+      amount: String(paymentData.totalAmount || amount),
+      method: paymentData.method || "",
+      approvedAt: paymentData.approvedAt || "",
+    }),
+  });
+
+  const mailText = await mailResponse.text();
+
+  console.log("Google Script mail status:", mailResponse.status);
+  console.log("Google Script mail response:", mailText);
+
+  if (!mailResponse.ok) {
+    console.error("메일 발송 실패:", mailText);
+  }
+} else {
+  console.error("GOOGLE_SCRIPT_URL이 설정되지 않았습니다.");
+}
 
     return NextResponse.json(paymentData);
   } catch (error) {
