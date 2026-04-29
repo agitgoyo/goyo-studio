@@ -20,7 +20,7 @@ export default function D5ClassPage() {
           </p>
           <div className="hero-buttons">
             <a href="#class" className="btn btn-primary">클래스 보기</a>
-            <a href="#apply" className="btn btn-outline">신청하기</a>
+            <a href="/apply" className="btn btn-primary">신청하기</a>
           </div>
         </div>
 
