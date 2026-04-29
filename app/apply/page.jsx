@@ -1,4 +1,138 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
+
 export default function ApplyPage() {
+  const PRICE = 240000;
+
+  const [selectedClass, setSelectedClass] = useState("");
+  const [capacity, setCapacity] = useState(null);
+  const [isCheckingCapacity, setIsCheckingCapacity] = useState(false);
+
+  useEffect(() => {
+    if (!selectedClass) {
+      setCapacity(null);
+      return;
+    }
+
+    const checkCapacity = async () => {
+      setIsCheckingCapacity(true);
+
+      try {
+        const response = await fetch(
+          `/api/applications/capacity?classType=${encodeURIComponent(
+            selectedClass
+          )}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error(data);
+          setCapacity(null);
+          return;
+        }
+
+        setCapacity(data);
+      } catch (error) {
+        console.error(error);
+        setCapacity(null);
+      } finally {
+        setIsCheckingCapacity(false);
+      }
+    };
+
+    checkCapacity();
+  }, [selectedClass]);
+
+  const handlePayment = async (event) => {
+    event.preventDefault();
+
+    const formElement = event.currentTarget;
+    const formData = new FormData(formElement);
+
+    const name = formData.get("name");
+    const phone = formData.get("phone");
+    const email = formData.get("email");
+    const classType = formData.get("classType");
+    const job = formData.get("job") || "";
+    const level = formData.get("level") || "";
+    const message = formData.get("message") || "";
+
+    if (!name || !phone || !email || !classType) {
+      alert("필수 정보를 모두 입력해주세요.");
+      return;
+    }
+
+    try {
+      const capacityResponse = await fetch(
+        `/api/applications/capacity?classType=${encodeURIComponent(classType)}`
+      );
+      const capacityData = await capacityResponse.json();
+
+      if (!capacityResponse.ok) {
+        alert(capacityData.message || "정원 확인 중 오류가 발생했습니다.");
+        return;
+      }
+
+      if (capacityData.isFull) {
+        alert("해당 강의는 정원이 마감되었습니다.");
+        setCapacity(capacityData);
+        return;
+      }
+
+      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
+
+      if (!clientKey) {
+        alert("토스페이먼츠 Client Key가 설정되지 않았습니다.");
+        return;
+      }
+
+      const tossPayments = await loadTossPayments(clientKey);
+      const payment = tossPayments.payment({ customerKey: ANONYMOUS });
+
+      const orderId = `goyo_${Date.now()}_${Math.random()
+        .toString(36)
+        .slice(2, 8)}`;
+
+      const orderName = `${classType} 수강권`;
+
+      const params = new URLSearchParams({
+        name: String(name),
+        phone: String(phone),
+        email: String(email),
+        classType: String(classType),
+        job: String(job),
+        level: String(level),
+        message: String(message),
+      });
+
+      const siteUrl =
+        process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+
+      await payment.requestPayment({
+        method: "CARD",
+        amount: {
+          currency: "KRW",
+          value: PRICE,
+        },
+        orderId,
+        orderName,
+        customerName: String(name),
+        customerEmail: String(email),
+        customerMobilePhone: String(phone).replaceAll("-", ""),
+        successUrl: `${siteUrl}/payment/success?${params.toString()}`,
+        failUrl: `${siteUrl}/payment/fail`,
+      });
+    } catch (error) {
+      console.error(error);
+      alert("결제창을 여는 중 문제가 발생했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  const isFull = capacity?.isFull;
+
   return (
     <main className="apply-page">
       <section className="apply-card">
@@ -7,18 +141,19 @@ export default function ApplyPage() {
         <h1>강의 신청</h1>
 
         <p className="apply-description">
-          안녕하세요. 고요입니다.<br />
-          강의는 원데이 클래스로 하루 6시간 동안 진행됩니다.<br />
-          아래 정보를 작성해주시고 원하시는 강의를 선택 후 결제 완료되면 수강신청이 완료됩니다.<br />
-          소수(정원8명)로 진행되는 강의라 신중한 신청 부탁드립니다.<br />
+          안녕하세요. 고요입니다.
+          <br />
+          강의는 원데이 클래스로 하루 6시간 동안 진행됩니다.
+          <br />
+          아래 정보를 작성해주시고 원하시는 강의를 선택 후 결제 완료되면
+          수강신청이 완료됩니다.
+          <br />
+          소수(정원8명)로 진행되는 강의라 신중한 신청 부탁드립니다.
+          <br />
           감사합니다 :D
         </p>
 
-        <form
-          className="apply-form"
-          action="https://script.google.com/macros/s/AKfycbxujdDp6MxnFDPCL1rEncsC97OT6yzqPMB8ke2y7J3ycKz_2K617TUejaTmyvUYVoiY/exec"
-          method="POST"
-        >
+        <form className="apply-form" onSubmit={handlePayment}>
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="name">이름 *</label>
@@ -45,11 +180,20 @@ export default function ApplyPage() {
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="classType">신청 강의 *</label>
-              <select id="classType" name="classType" required>
+              <select
+                id="classType"
+                name="classType"
+                required
+                value={selectedClass}
+                onChange={(e) => setSelectedClass(e.target.value)}
+              >
                 <option value="">강의를 선택해주세요</option>
-                <option value="D5 Render 기초반">[ 05/15 ] D5 투시도(초급반) - 24만원</option>
-                <option value="D5 Render 중급반">[ 05/22 ] D5 조감도(중급반) - 24만원</option>
-                
+                <option value="[ 05/15 ] D5 투시도(초급반)">
+                  [ 05/15 ] D5 투시도(초급반) - 24만원
+                </option>
+                <option value="[ 05/22 ] D5 조감도(중급반)">
+                  [ 05/22 ] D5 조감도(중급반) - 24만원
+                </option>
               </select>
             </div>
 
@@ -65,6 +209,28 @@ export default function ApplyPage() {
               </select>
             </div>
           </div>
+
+          {selectedClass && (
+            <div className={`capacity-box ${isFull ? "full" : ""}`}>
+              {isCheckingCapacity && <p>정원을 확인하고 있습니다...</p>}
+
+              {!isCheckingCapacity && capacity && !capacity.isFull && (
+                <>
+                  <strong>
+                    현재 {capacity.paidCount} / {capacity.maxCapacity}명 신청 완료
+                  </strong>
+                  <p>남은 자리 {capacity.remaining}명</p>
+                </>
+              )}
+
+              {!isCheckingCapacity && capacity?.isFull && (
+                <>
+                  <strong>마감되었습니다.</strong>
+                  <p>해당 강의는 정원 {capacity.maxCapacity}명이 모두 신청 완료되었습니다.</p>
+                </>
+              )}
+            </div>
+          )}
 
           <div className="form-group">
             <label htmlFor="level">프로그램 사용 경험</label>
@@ -85,13 +251,20 @@ export default function ApplyPage() {
               placeholder="강의를 통해 배우고 싶은 내용이나 현재 어려운 점을 적어주세요."
             ></textarea>
           </div>
-
-          <button type="submit" className="submit-button">
-            결제하기
+<div className="apply-final">
+  <p>✓ 6시간 원데이 집중 강의</p>
+  <p>✓ 실무에 바로 적용 가능</p>
+  <p>✓ 소수 정예 피드백</p>
+</div>
+          <button
+            type="submit"
+            className="submit-button"
+            disabled={isFull || isCheckingCapacity}
+          >
+            {isFull ? "마감되었습니다" : "강의 결제하기"}
           </button>
 
           <p className="apply-notice">
-            
             정원은 기수별 8명이며, 결제 완료 순으로 최종 확정됩니다.
           </p>
         </form>
