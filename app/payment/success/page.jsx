@@ -54,6 +54,8 @@ if (alreadyConfirmed) {
             phone: searchParams.get("phone") || "",
             email: searchParams.get("email") || "",
             classType: searchParams.get("classType") || "",
+            classId: searchParams.get("classId") || "",
+classType: searchParams.get("classType") || "",
             job: searchParams.get("job") || "",
             level: searchParams.get("level") || "",
             message: searchParams.get("message") || "",
@@ -62,16 +64,7 @@ if (alreadyConfirmed) {
 
         const data = await response.json();
 
-        if (!response.ok) {
-  console.error("결제 승인 실패:", {
-    status: response.status,
-    data,
-  });
-
-  alert(data.message || `결제 승인 실패: ${response.status}`);
-  setStatus("error");
-  return;
-}
+        
 
         sessionStorage.setItem(`confirmed_${orderId}`, "true");
         setPaymentData(data);

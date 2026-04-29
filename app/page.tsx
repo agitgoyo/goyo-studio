@@ -702,6 +702,8 @@ export default function App() {
         }
       `}</style>
 
+      
+
       <header>
         <div className="wrap nav">
           <a className="logo" href="#">GOYO STUDIO</a>
@@ -928,7 +930,14 @@ export default function App() {
           <div>© GOYO STUDIO. All rights reserved.</div>
           <div>Architecture · Visualization · Education</div>
         </div>
+        <a href="/admin" className="admin-button">
+  관리자 페이지
+</a>
       </footer>
     </>
   );
 }
+
+<a href="/admin" className="admin-button">
+  관리자 페이지
+</a>

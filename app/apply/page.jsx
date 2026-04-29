@@ -4,14 +4,40 @@ import { useEffect, useState } from "react";
 import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 
 export default function ApplyPage() {
-  const PRICE = 240000;
-
-  const [selectedClass, setSelectedClass] = useState("");
+  const [classes, setClasses] = useState([]);
+  const [selectedClassId, setSelectedClassId] = useState("");
   const [capacity, setCapacity] = useState(null);
   const [isCheckingCapacity, setIsCheckingCapacity] = useState(false);
+  const [isLoadingClasses, setIsLoadingClasses] = useState(true);
+
+  const selectedClass = classes.find((item) => item.id === selectedClassId);
+  const isFull = capacity?.isFull;
 
   useEffect(() => {
-    if (!selectedClass) {
+    const loadClasses = async () => {
+      try {
+        const response = await fetch("/api/classes");
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.message || "강의 목록을 불러오지 못했습니다.");
+          return;
+        }
+
+        setClasses(data);
+      } catch (error) {
+        console.error(error);
+        alert("강의 목록을 불러오는 중 오류가 발생했습니다.");
+      } finally {
+        setIsLoadingClasses(false);
+      }
+    };
+
+    loadClasses();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedClassId) {
       setCapacity(null);
       return;
     }
@@ -21,8 +47,8 @@ export default function ApplyPage() {
 
       try {
         const response = await fetch(
-          `/api/applications/capacity?classType=${encodeURIComponent(
-            selectedClass
+          `/api/applications/capacity?classId=${encodeURIComponent(
+            selectedClassId
           )}`
         );
 
@@ -44,7 +70,7 @@ export default function ApplyPage() {
     };
 
     checkCapacity();
-  }, [selectedClass]);
+  }, [selectedClassId]);
 
   const handlePayment = async (event) => {
     event.preventDefault();
@@ -55,19 +81,21 @@ export default function ApplyPage() {
     const name = formData.get("name");
     const phone = formData.get("phone");
     const email = formData.get("email");
-    const classType = formData.get("classType");
+    const classId = formData.get("classId");
     const job = formData.get("job") || "";
     const level = formData.get("level") || "";
     const message = formData.get("message") || "";
 
-    if (!name || !phone || !email || !classType) {
+    const selected = classes.find((item) => item.id === classId);
+
+    if (!name || !phone || !email || !classId || !selected) {
       alert("필수 정보를 모두 입력해주세요.");
       return;
     }
 
     try {
       const capacityResponse = await fetch(
-        `/api/applications/capacity?classType=${encodeURIComponent(classType)}`
+        `/api/applications/capacity?classId=${encodeURIComponent(classId)}`
       );
       const capacityData = await capacityResponse.json();
 
@@ -96,25 +124,26 @@ export default function ApplyPage() {
         .toString(36)
         .slice(2, 8)}`;
 
-      const orderName = `${classType} 수강권`;
+      const orderName = `[ ${selected.date} ] ${selected.title} 수강권`;
 
       const params = new URLSearchParams({
         name: String(name),
         phone: String(phone),
         email: String(email),
-        classType: String(classType),
+        classId: String(classId),
+        classType: `[ ${selected.date} ] ${selected.title}`,
         job: String(job),
         level: String(level),
         message: String(message),
       });
 
-      const siteUrl = window.location.origin;;
+      const siteUrl = window.location.origin;
 
       await payment.requestPayment({
         method: "CARD",
         amount: {
           currency: "KRW",
-          value: PRICE,
+          value: Number(selected.price),
         },
         orderId,
         orderName,
@@ -129,8 +158,6 @@ export default function ApplyPage() {
       alert("결제창을 여는 중 문제가 발생했습니다. 다시 시도해주세요.");
     }
   };
-
-  const isFull = capacity?.isFull;
 
   return (
     <main className="apply-page">
@@ -147,7 +174,7 @@ export default function ApplyPage() {
           아래 정보를 작성해주시고 원하시는 강의를 선택 후 결제 완료되면
           수강신청이 완료됩니다.
           <br />
-          소수(정원8명)로 진행되는 강의라 신중한 신청 부탁드립니다.
+          소수 정예로 진행되는 강의라 신중한 신청 부탁드립니다.
           <br />
           감사합니다 :D
         </p>
@@ -178,21 +205,26 @@ export default function ApplyPage() {
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="classType">신청 강의 *</label>
+              <label htmlFor="classId">신청 강의 *</label>
               <select
-                id="classType"
-                name="classType"
+                id="classId"
+                name="classId"
                 required
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
+                value={selectedClassId}
+                onChange={(e) => setSelectedClassId(e.target.value)}
               >
-                <option value="">강의를 선택해주세요</option>
-                <option value="[ 05/15 ] D5 투시도(초급반)">
-                  [ 05/15 ] D5 투시도(초급반) - 24만원
+                <option value="">
+                  {isLoadingClasses
+                    ? "강의 목록을 불러오는 중..."
+                    : "강의를 선택해주세요"}
                 </option>
-                <option value="[ 05/22 ] D5 조감도(중급반)">
-                  [ 05/22 ] D5 조감도(중급반) - 24만원
-                </option>
+
+                {classes.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    [ {item.date} ] {item.title} -{" "}
+                    {Number(item.price).toLocaleString()}원
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -209,14 +241,14 @@ export default function ApplyPage() {
             </div>
           </div>
 
-          {selectedClass && (
+          {selectedClassId && (
             <div className={`capacity-box ${isFull ? "full" : ""}`}>
               {isCheckingCapacity && <p>정원을 확인하고 있습니다...</p>}
 
               {!isCheckingCapacity && capacity && !capacity.isFull && (
                 <>
                   <strong>
-                    현재 {capacity.paidCount} / {capacity.maxCapacity}명 신청 완료
+                    현재 {capacity.paidCount} / {capacity.capacity}명 신청 완료
                   </strong>
                   <p>남은 자리 {capacity.remaining}명</p>
                 </>
@@ -225,7 +257,10 @@ export default function ApplyPage() {
               {!isCheckingCapacity && capacity?.isFull && (
                 <>
                   <strong>마감되었습니다.</strong>
-                  <p>해당 강의는 정원 {capacity.maxCapacity}명이 모두 신청 완료되었습니다.</p>
+                  <p>
+                    해당 강의는 정원 {capacity.capacity}명이 모두 신청
+                    완료되었습니다.
+                  </p>
                 </>
               )}
             </div>
@@ -250,21 +285,28 @@ export default function ApplyPage() {
               placeholder="강의를 통해 배우고 싶은 내용이나 현재 어려운 점을 적어주세요."
             ></textarea>
           </div>
-<div className="apply-final">
-  <p>✓ 6시간 원데이 집중 강의</p>
-  <p>✓ 실무에 바로 적용 가능</p>
-  <p>✓ 소수 정예 피드백</p>
-</div>
+
+          <div className="apply-final">
+            <p>✓ 6시간 원데이 집중 강의</p>
+            <p>✓ 실무에 바로 적용 가능</p>
+            <p>✓ 소수 정예 피드백</p>
+          </div>
+
           <button
             type="submit"
             className="submit-button"
-            disabled={isFull || isCheckingCapacity}
+            disabled={
+              isLoadingClasses ||
+              isCheckingCapacity ||
+              !selectedClassId ||
+              isFull
+            }
           >
             {isFull ? "마감되었습니다" : "강의 결제하기"}
           </button>
 
           <p className="apply-notice">
-            정원은 기수별 8명이며, 결제 완료 순으로 최종 확정됩니다.
+            정원은 기수별로 제한되며, 결제 완료 순으로 최종 확정됩니다.
           </p>
         </form>
       </section>

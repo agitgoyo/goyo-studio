@@ -32,9 +32,9 @@ export default function D5ClassPage() {
       <section className="question-section">
         <p className="eyebrow">QUESTION</p>
         <h2>
-          AI 시대에,
+          AI 시대에, 
           <br />
-          아직도 렌더링을 배워야 할까요?
+           렌더링을 배워야 할까요?
         </h2>
         <p className="section-lead">
           요즘은 AI로도 멋진 이미지가 만들어집니다.<br /> 그런데 건축 이미지는 단순히
@@ -53,7 +53,7 @@ export default function D5ClassPage() {
 
       <section className="story-section light">
         <p className="eyebrow">PART 01</p>
-        <h2>렌더링은 이미지 기술이 아니라<br /> 설계 언어입니다.</h2><br />
+        <h2>렌더링, 이미지 기술이 아니라<br /> 설계 언어입니다.</h2><br />
         <p>
           건축 이미지를 잘 만든다는 건 단순히 실사처럼 보이게 만든다는 뜻이
           아닙니다. 내가 디자인한 건물의 장점이 무엇인지 알고, 그 장점이 가장 잘
@@ -71,7 +71,7 @@ export default function D5ClassPage() {
 
       <section className="story-section dark">
         <p className="eyebrow">PART 02</p>
-        <h2>잘 만든 설계가 이미지 때문에 <br />작아 보이면 안 됩니다.</h2>
+        <h2>좋은 설계가 이미지 때문에 <br />작아 보이면 안 됩니다.</h2>
         <p>
           비례도 좋고, 매스도 좋고, 디테일도 고민했는데 렌더링 한 장에서 그
           의도가 전달되지 않으면 너무 아깝습니다. 건축 이미지는 설계의 마지막
@@ -106,7 +106,7 @@ export default function D5ClassPage() {
 
       <section className="value-section">
         <p className="eyebrow">WHAT MATTERS</p>
-        <h2>좋은 건축 이미지를 만드는 4가지 기준</h2>
+        <h2>좋은 건축 이미지를 만드는 <br /> 4가지 기준</h2>
 
         <div className="value-grid">
           <div className="value-card">
@@ -134,7 +134,7 @@ export default function D5ClassPage() {
 
       <section className="class-section" id="class">
         <p className="eyebrow">CLASS LINE-UP</p>
-        <h2>초급반과 중급반은 목적이 다릅니다.</h2>
+        <h2>초급반과 중급반은 <br /> 목적이 다릅니다.</h2>
         <p className="class-desc">
           두 반 모두 6시간으로 진행되지만 목표 결과물이 다릅니다. 초급반은 D5를
           처음 배우는 사람도 따라올 수 있는 투시도 중심, 중급반은 더 넓은 장면과
@@ -194,7 +194,7 @@ export default function D5ClassPage() {
 
       <section className="curriculum-section">
         <p className="eyebrow">CURRICULUM</p>
-        <h2>6시간 안에 한 장을 끝까지 완성합니다.</h2>
+        <h2>6시간 안에 한 장을 <br /> 끝까지 완성합니다.</h2>
 
         <div className="curriculum-grid">
           <div className="curriculum-card">
@@ -247,9 +247,9 @@ export default function D5ClassPage() {
 
       <section className="gallery-section">
         <p className="eyebrow">IMAGE MOOD</p>
-        <h2>이런 이미지를 만들 수 있게 됩니다.</h2>
+        <h2>이런 이미지를 <br /> 만들 수 있게 됩니다.</h2>
         <p>
-          수업에서는 단순히 버튼을 따라 누르는 것이 아니라, <br />왜 이 구도를
+          수업에서는 단순히 단순한 기능설명이 아니라, <br />왜 이 구도를
           선택하는지, 왜 이 빛을 쓰는지, 왜 이 분위기가 어울리는지 함께 설명합니다.
         </p>
 

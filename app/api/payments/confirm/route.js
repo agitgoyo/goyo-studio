@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const MAX_CAPACITY = 8;
-
 function getSupabase() {
   return createClient(
     process.env.SUPABASE_URL,
@@ -19,13 +17,14 @@ export async function POST(request) {
       name,
       phone,
       email,
+      classId,
       classType,
       job,
       level,
       message,
     } = await request.json();
 
-    if (!paymentKey || !orderId || !amount || !classType) {
+    if (!paymentKey || !orderId || !amount || !classId) {
       return NextResponse.json(
         { message: "필수 결제 정보가 없습니다." },
         { status: 400 }
@@ -34,7 +33,19 @@ export async function POST(request) {
 
     const supabase = getSupabase();
 
-    // 이미 저장된 주문이면 중복 저장 방지
+    const { data: selectedClass, error: classError } = await supabase
+      .from("classes")
+      .select("*")
+      .eq("id", classId)
+      .single();
+
+    if (classError || !selectedClass) {
+      return NextResponse.json(
+        { message: "강의 정보를 찾을 수 없습니다." },
+        { status: 404 }
+      );
+    }
+
     const { data: existingApplication } = await supabase
       .from("applications")
       .select("*")
@@ -49,25 +60,30 @@ export async function POST(request) {
       });
     }
 
-    // 정원 확인
     const { count, error: countError } = await supabase
       .from("applications")
       .select("id", { count: "exact", head: true })
-      .eq("class_type", classType)
+      .eq("class_id", classId)
       .eq("payment_status", "paid");
 
     if (countError) {
-      console.error("정원 확인 오류:", countError);
       return NextResponse.json(
         { message: `정원 확인 오류: ${countError.message}` },
         { status: 500 }
       );
     }
 
-    if ((count || 0) >= MAX_CAPACITY) {
+    if ((count || 0) >= selectedClass.capacity) {
       return NextResponse.json(
         { message: "해당 강의는 정원이 마감되었습니다." },
         { status: 409 }
+      );
+    }
+
+    if (Number(amount) !== Number(selectedClass.price)) {
+      return NextResponse.json(
+        { message: "결제 금액이 강의 금액과 일치하지 않습니다." },
+        { status: 400 }
       );
     }
 
@@ -102,16 +118,18 @@ export async function POST(request) {
     const paymentData = await tossResponse.json();
 
     if (!tossResponse.ok) {
-      console.error("토스 승인 오류:", paymentData);
       return NextResponse.json(paymentData, { status: tossResponse.status });
     }
 
-    // Supabase 저장
+    const finalClassType =
+      classType || `[ ${selectedClass.date} ] ${selectedClass.title}`;
+
     const { error: insertError } = await supabase.from("applications").insert({
+      class_id: classId,
       name: name || "",
       phone: phone || "",
       email: email || "",
-      class_type: classType,
+      class_type: finalClassType,
       job: job || "",
       level: level || "",
       message: message || "",
@@ -124,8 +142,6 @@ export async function POST(request) {
     });
 
     if (insertError) {
-      console.error("신청 정보 저장 오류:", insertError);
-
       return NextResponse.json(
         {
           message: `신청 정보 저장 오류: ${insertError.message}`,
@@ -137,43 +153,31 @@ export async function POST(request) {
       );
     }
 
-    // Google Apps Script 메일 발송
     const googleScriptUrl = process.env.GOOGLE_SCRIPT_URL;
 
-if (googleScriptUrl) {
-  const mailResponse = await fetch(googleScriptUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      name: name || "",
-      phone: phone || "",
-      email: email || "",
-      classType: classType || "",
-      job: job || "",
-      level: level || "",
-      message: message || "",
-      paymentStatus: "결제 완료",
-      orderId: paymentData.orderId || orderId,
-      paymentKey: paymentData.paymentKey || paymentKey,
-      amount: String(paymentData.totalAmount || amount),
-      method: paymentData.method || "",
-      approvedAt: paymentData.approvedAt || "",
-    }),
-  });
-
-  const mailText = await mailResponse.text();
-
-  console.log("Google Script mail status:", mailResponse.status);
-  console.log("Google Script mail response:", mailText);
-
-  if (!mailResponse.ok) {
-    console.error("메일 발송 실패:", mailText);
-  }
-} else {
-  console.error("GOOGLE_SCRIPT_URL이 설정되지 않았습니다.");
-}
+    if (googleScriptUrl) {
+      await fetch(googleScriptUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          name: name || "",
+          phone: phone || "",
+          email: email || "",
+          classType: finalClassType,
+          job: job || "",
+          level: level || "",
+          message: message || "",
+          paymentStatus: "결제 완료",
+          orderId: paymentData.orderId || orderId,
+          paymentKey: paymentData.paymentKey || paymentKey,
+          amount: String(paymentData.totalAmount || amount),
+          method: paymentData.method || "",
+          approvedAt: paymentData.approvedAt || "",
+        }),
+      });
+    }
 
     return NextResponse.json(paymentData);
   } catch (error) {
