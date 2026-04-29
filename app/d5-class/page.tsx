@@ -53,7 +53,7 @@ export default function D5ClassPage() {
 
       <section className="story-section light">
         <p className="eyebrow">PART 01</p>
-        <h2>렌더링, 이미지 기술이 아니라<br /> 설계 언어입니다.</h2><br />
+        <h2>이미지 기술이 아니라<br /> 설계 언어입니다.</h2><br />
         <p>
           건축 이미지를 잘 만든다는 건 단순히 실사처럼 보이게 만든다는 뜻이
           아닙니다. 내가 디자인한 건물의 장점이 무엇인지 알고, 그 장점이 가장 잘
