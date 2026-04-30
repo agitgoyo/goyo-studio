@@ -7,7 +7,15 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [classes, setClasses] = useState([]);
   const [message, setMessage] = useState("");
-
+const [newClass, setNewClass] = useState({
+  id: "",
+  title: "",
+  date: "",
+  price: 240000,
+  capacity: 8,
+  sort_order: 99,
+  is_active: true,
+});
   const loadClasses = async () => {
     setMessage("");
 
@@ -27,7 +35,32 @@ export default function AdminPage() {
     setClasses(data);
     setIsLoggedIn(true);
   };
+const deleteClass = async (id) => {
+  const ok = confirm(
+    "정말 이 강의를 삭제할까요?\n결제자가 있는 강의는 삭제되지 않습니다."
+  );
 
+  if (!ok) return;
+
+  setMessage("삭제 중...");
+
+  const response = await fetch(`/api/admin/classes?id=${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: {
+      "x-admin-password": password,
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    setMessage(data.message || "삭제에 실패했습니다.");
+    return;
+  }
+
+  setMessage("삭제되었습니다.");
+  setClasses((prev) => prev.filter((item) => item.id !== id));
+};
   const updateClass = async (classItem) => {
     setMessage("저장 중...");
 
@@ -52,7 +85,37 @@ export default function AdminPage() {
       prev.map((item) => (item.id === data.id ? data : item))
     );
   };
+const createClass = async () => {
+  setMessage("새 강의를 추가하는 중...");
 
+  const response = await fetch("/api/admin/classes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-password": password,
+    },
+    body: JSON.stringify(newClass),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    setMessage(data.message || "새 강의 추가에 실패했습니다.");
+    return;
+  }
+
+  setMessage("새 강의가 추가되었습니다.");
+  setClasses((prev) => [...prev, data]);
+  setNewClass({
+    id: "",
+    title: "",
+    date: "",
+    price: 240000,
+    capacity: 8,
+    sort_order: 99,
+    is_active: true,
+  });
+};
   const changeClass = (id, key, value) => {
     setClasses((prev) =>
       prev.map((item) =>
@@ -106,6 +169,73 @@ export default function AdminPage() {
             새로고침
           </button>
         </div>
+<div style={styles.classCard}>
+  <p style={styles.label}>NEW CLASS</p>
+  <h2 style={{ marginTop: 0 }}>새 강의 추가</h2>
+
+  <label style={styles.formLabel}>고유 ID</label>
+  <input
+    style={styles.input}
+    value={newClass.id}
+    placeholder="예: d5-basic-202406"
+    onChange={(e) => setNewClass({ ...newClass, id: e.target.value })}
+  />
+
+  <label style={styles.formLabel}>강의명</label>
+  <input
+    style={styles.input}
+    value={newClass.title}
+    placeholder="예: D5 투시도(초급반)"
+    onChange={(e) => setNewClass({ ...newClass, title: e.target.value })}
+  />
+
+  <label style={styles.formLabel}>강의 날짜</label>
+  <input
+    style={styles.input}
+    value={newClass.date}
+    placeholder="예: 06/10"
+    onChange={(e) => setNewClass({ ...newClass, date: e.target.value })}
+  />
+
+  <label style={styles.formLabel}>수강료</label>
+  <input
+    style={styles.input}
+    type="number"
+    value={newClass.price}
+    onChange={(e) => setNewClass({ ...newClass, price: e.target.value })}
+  />
+
+  <label style={styles.formLabel}>정원</label>
+  <input
+    style={styles.input}
+    type="number"
+    value={newClass.capacity}
+    onChange={(e) => setNewClass({ ...newClass, capacity: e.target.value })}
+  />
+
+  <label style={styles.formLabel}>정렬 순서</label>
+  <input
+    style={styles.input}
+    type="number"
+    value={newClass.sort_order}
+    onChange={(e) => setNewClass({ ...newClass, sort_order: e.target.value })}
+  />
+
+  <label style={styles.checkboxRow}>
+    <input
+      type="checkbox"
+      checked={newClass.is_active}
+      onChange={(e) =>
+        setNewClass({ ...newClass, is_active: e.target.checked })
+      }
+    />
+    신청 페이지에 노출
+  </label>
+
+  <button style={styles.button} onClick={createClass}>
+    새 강의 추가하기
+  </button>
+</div>
 
         <div style={styles.grid}>
           {classes.map((item) => (
@@ -159,6 +289,17 @@ export default function AdminPage() {
               <button style={styles.button} onClick={() => updateClass(item)}>
                 저장하기
               </button>
+              <button
+  style={{
+    ...styles.button,
+    marginTop: "12px",
+    background: "#3a2727",
+    color: "#fff",
+  }}
+  onClick={() => deleteClass(item.id)}
+>
+  강의 삭제하기
+</button>
             </div>
           ))}
         </div>

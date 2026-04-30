@@ -145,7 +145,7 @@ export default function D5ClassPage() {
           <div className="class-card">
             <img src="/assets/d5-perspective.jpg" alt="초급반 투시도 예시" />
             <div className="class-content">
-              <p className="class-label">초급반 · 6시간 (10:00~17:00) · 24만원</p>
+              <p className="class-label">초급반 · 6시간 (10:00~17:00) · 24만원 <br /> 강남역 ansen 스튜디오 - 정원8명</p>
               <h3>투시도 만들기 - 5/15(금)</h3><br />
               <p>
                 D5 Render를 처음 배우는 분들을 위한 클래스입니다. <br />기본
@@ -169,7 +169,7 @@ export default function D5ClassPage() {
           <div className="class-card">
             <img src="/assets/d5-aerial.jpg" alt="중급반 조감도 예시" />
             <div className="class-content">
-              <p className="class-label">중급반 · 6시간 (10:00~17:00) · 24만원</p>
+              <p className="class-label">중급반 · 6시간 (10:00~17:00) · 24만원 <br /> 강남역 ansen 스튜디오 - 정원8명</p>
               <h3>조감도 만들기 - 5/22(금)</h3><br />
               <p>
                 이미지의 완성도를 더 높이고 싶은
@@ -184,7 +184,7 @@ export default function D5ClassPage() {
                 <li>포트폴리오용 조감도 1장 완성</li><br />
               </ul>
               <div className="class-point">
-                추천 대상:<br /> D5 기본은 아는 분,<br /> 조감도가 어려운 분,<br /> 포트폴리오
+                추천 대상:<br /> D5로 렌더를 해보신분,<br /> 조감도가 어려운 분,<br /> 포트폴리오
                 이미지를 업그레이드하고 싶은 분
               </div>
             </div>
