@@ -1,6 +1,27 @@
+"use client";
+
+
 import "./d5-class.css";
+import { useState } from "react";
 
 export default function D5ClassPage() {
+  
+
+const [selectedImageSet, setSelectedImageSet] = useState<string[] | null>(null);
+const [currentImageIndex, setCurrentImageIndex] = useState(0);
+const curriculumImages = {
+    basic: [
+      "/images/d5-basic-01.jpg",
+      "/images/d5-basic-02.jpg",
+      "/images/d5-basic-03.jpg",
+    ],
+    intermediate: [
+      "/images/d5-intermediate-01.jpg",
+      "/images/d5-intermediate-02.jpg",
+      "/images/d5-intermediate-03.jpg",
+    ],
+  };
+
   return (
     <main className="d5-page">
       <section className="d5-hero">
@@ -142,7 +163,10 @@ export default function D5ClassPage() {
         </p>
 
         <div className="class-grid">
-          <div className="class-card">
+          <div className="class-card" onClick={() => {
+  setSelectedImageSet(curriculumImages.basic);
+  setCurrentImageIndex(0);
+}}>
             <img src="/assets/d5-perspective.jpg" alt="초급반 투시도 예시" />
             <div className="class-content">
               <p className="class-label">초급반 · 5시간 (13:00~18:00) · 18만원 <br /> 강남역 ansen 스튜디오 - 정원8명</p>
@@ -166,7 +190,10 @@ export default function D5ClassPage() {
             </div>
           </div>
 
-          <div className="class-card">
+          <div className="class-card" onClick={() => {
+  setSelectedImageSet(curriculumImages.intermediate);
+  setCurrentImageIndex(0);
+}}>
             <img src="/assets/d5-aerial.jpg" alt="중급반 조감도 예시" />
             <div className="class-content">
               <p className="class-label">중급반 · 5시간 (13:00~18:00) · 18만원 <br /> 강남역 ansen 스튜디오 - 정원8명</p>
@@ -274,6 +301,59 @@ export default function D5ClassPage() {
         </p>
         <a href="/apply" className="btn btn-primary">강의 신청하기</a>
       </section>
+      {selectedImageSet && (
+  <div
+    className="image-modal-overlay"
+    onClick={() => setSelectedImageSet(null)}
+  >
+    <div
+      className="image-modal"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        type="button"
+        className="image-modal-close"
+        onClick={() => setSelectedImageSet(null)}
+      >
+        ×
+      </button>
+
+      <button
+        type="button"
+        className="image-modal-arrow image-modal-prev"
+        onClick={() =>
+          setCurrentImageIndex((prev) =>
+            prev === 0 ? selectedImageSet.length - 1 : prev - 1
+          )
+        }
+      >
+        ‹
+      </button>
+
+      <img
+        src={selectedImageSet[currentImageIndex]}
+        alt="D5 강의 커리큘럼 이미지"
+        className="image-modal-img"
+      />
+
+      <button
+        type="button"
+        className="image-modal-arrow image-modal-next"
+        onClick={() =>
+          setCurrentImageIndex((prev) =>
+            prev === selectedImageSet.length - 1 ? 0 : prev + 1
+          )
+        }
+      >
+        ›
+      </button>
+
+      <div className="image-modal-count">
+        {currentImageIndex + 1} / {selectedImageSet.length}
+      </div>
+    </div>
+  </div>
+)}
     </main>
   );
 }
