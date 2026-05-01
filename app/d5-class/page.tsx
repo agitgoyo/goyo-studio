@@ -13,12 +13,12 @@ const curriculumImages = {
     basic: [
       "/images/d5-basic-01.jpg",
       "/images/d5-basic-02.jpg",
-      "/images/d5-basic-03.jpg",
+      
     ],
     intermediate: [
       "/images/d5-intermediate-01.jpg",
       "/images/d5-intermediate-02.jpg",
-      "/images/d5-intermediate-03.jpg",
+      
     ],
   };
 
