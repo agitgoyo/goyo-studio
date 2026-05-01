@@ -75,8 +75,8 @@ export default function ApplyPage() {
   const handlePayment = async (event) => {
     event.preventDefault();
 
-    const formElement = event.currentTarget;
-    const formData = new FormData(formElement);
+    const formElement = event.currentTarget.closest("form");
+const formData = new FormData(formElement);
 
     const name = formData.get("name");
     const phone = formData.get("phone");
@@ -158,7 +158,62 @@ export default function ApplyPage() {
       alert("결제창을 여는 중 문제가 발생했습니다. 다시 시도해주세요.");
     }
   };
+const handleSubmitApplication = async (event) => {
+  event.preventDefault();
 
+  const formElement = event.currentTarget;
+  const formData = new FormData(formElement);
+
+  const name = formData.get("name");
+  const phone = formData.get("phone");
+  const email = formData.get("email");
+  const classId = formData.get("classId");
+  const job = formData.get("job") || "";
+  const level = formData.get("level") || "";
+  const message = formData.get("message") || "";
+
+  const selected = classes.find((item) => item.id === classId);
+
+  if (!name || !phone || !email || !classId || !selected) {
+    alert("필수 정보를 모두 입력해주세요.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/applications/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        phone,
+        email,
+        classId,
+        classType: `[ ${selected.date} ] ${selected.title}`,
+        job,
+        level,
+        message,
+        amount: selected.price,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "신청 접수에 실패했습니다.");
+      return;
+    }
+
+    alert("수강신청이 접수되었습니다. 계좌이체 안내를 별도로 전달드릴게요.");
+    formElement.reset();
+    setSelectedClassId("");
+    setCapacity(null);
+  } catch (error) {
+    console.error(error);
+    alert("신청 접수 중 문제가 발생했습니다. 다시 시도해주세요.");
+  }
+};
   return (
     <main className="apply-page">
       <section className="apply-card">
@@ -169,17 +224,17 @@ export default function ApplyPage() {
         <p className="apply-description">
           안녕하세요. 고요입니다.
           <br />
-          강의는 원데이 클래스로 하루 6시간 동안 진행됩니다.
-          <br />
-          아래 정보를 작성해주시고 원하시는 강의를 선택 후 결제 완료되면
-          수강신청이 완료됩니다.
-          <br />
+          강의는 원데이 클래스로 하루 5시간 동안 진행됩니다.
+          <br /><br />
+          아래 정보를 작성해주시고 원하시는 강의를 선택 후<br /> 신청해주시면
+          선착순 8명에 한하여 결제안내를 해드립니다.
+          <br /><br />
           소수 정예로 진행되는 강의라 신중한 신청 부탁드립니다.
           <br />
           감사합니다 :D
         </p>
 
-        <form className="apply-form" onSubmit={handlePayment}>
+        <form className="apply-form" onSubmit={handleSubmitApplication}>
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="name">이름 *</label>
@@ -287,26 +342,49 @@ export default function ApplyPage() {
           </div>
 
           <div className="apply-final">
-            <p>✓ 6시간 원데이 집중 강의</p>
+            <p>✓ 5시간 원데이 집중 강의</p>
             <p>✓ 실무에 바로 적용 가능</p>
             <p>✓ 소수 정예 피드백</p>
           </div>
 
-          <button
-            type="submit"
-            className="submit-button"
-            disabled={
-              isLoadingClasses ||
-              isCheckingCapacity ||
-              !selectedClassId ||
-              isFull
-            }
-          >
-            {isFull ? "마감되었습니다" : "강의 결제하기"}
-          </button>
+<button
+  type="button"
+  className="submit-button payment-review-button"
+  onClick={handlePayment}
+  disabled={
+    isLoadingClasses ||
+    isCheckingCapacity ||
+    !selectedClassId ||
+    isFull
+  }
+>
+  강의 결제하기
+</button>
+
+<p className="payment-review-notice">
+  현재 카드 결제 시스템은 심사 중입니다. 정식 오픈 전까지는 아래
+  <strong> 수강신청 보내기</strong> 버튼을 이용해주세요.
+</p>
+
+<button
+  type="submit"
+  className="submit-button bank-button"
+  disabled={
+    isLoadingClasses ||
+    isCheckingCapacity ||
+    !selectedClassId ||
+    isFull
+  }
+>
+  {isFull ? "마감되었습니다" : "수강신청 보내기"}
+</button>
+
+
+
+
 
           <p className="apply-notice">
-            정원은 기수별로 제한되며, 결제 완료 순으로 최종 확정됩니다.
+            결제 안내 문자를 받으시고 결제를 완료해주셔야 수강신청이 확정됩니다.
           </p>
         </form>
       </section>

@@ -136,7 +136,7 @@ export default function D5ClassPage() {
         <p className="eyebrow">CLASS LINE-UP</p>
         <h2>초급반과 중급반은 <br /> 목적이 다릅니다.</h2>
         <p className="class-desc">
-          두 반 모두 6시간으로 진행되지만 목표 결과물이 다릅니다. 초급반은 D5를
+          두 반 모두 5시간으로 진행되지만 목표 결과물이 다릅니다. 초급반은 D5를
           처음 배우는 사람도 따라올 수 있는 투시도 중심, 중급반은 더 넓은 장면과
           분위기를 다루는 조감도 중심 수업입니다.
         </p>
@@ -145,7 +145,7 @@ export default function D5ClassPage() {
           <div className="class-card">
             <img src="/assets/d5-perspective.jpg" alt="초급반 투시도 예시" />
             <div className="class-content">
-              <p className="class-label">초급반 · 6시간 (10:00~17:00) · 24만원 <br /> 강남역 ansen 스튜디오 - 정원8명</p>
+              <p className="class-label">초급반 · 5시간 (13:00~18:00) · 18만원 <br /> 강남역 ansen 스튜디오 - 정원8명</p>
               <h3>투시도 만들기 - 5/15(금)</h3><br />
               <p>
                 D5 Render를 처음 배우는 분들을 위한 클래스입니다. <br />기본
@@ -169,7 +169,7 @@ export default function D5ClassPage() {
           <div className="class-card">
             <img src="/assets/d5-aerial.jpg" alt="중급반 조감도 예시" />
             <div className="class-content">
-              <p className="class-label">중급반 · 6시간 (10:00~17:00) · 24만원 <br /> 강남역 ansen 스튜디오 - 정원8명</p>
+              <p className="class-label">중급반 · 5시간 (13:00~18:00) · 18만원 <br /> 강남역 ansen 스튜디오 - 정원8명</p>
               <h3>조감도 만들기 - 5/22(금)</h3><br />
               <p>
                 이미지의 완성도를 더 높이고 싶은
@@ -194,7 +194,7 @@ export default function D5ClassPage() {
 
       <section className="curriculum-section">
         <p className="eyebrow">CURRICULUM</p>
-        <h2>6시간 안에 한 장을 <br /> 끝까지 완성합니다.</h2>
+        <h2>5시간 안에 한 장을 <br /> 끝까지 완성합니다.</h2>
 
         <div className="curriculum-grid">
           <div className="curriculum-card">
