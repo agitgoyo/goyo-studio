@@ -34,7 +34,7 @@ export async function GET(request) {
     .from("applications")
     .select("*", { count: "exact", head: true })
     .eq("class_id", classId)
-    .eq("payment_status", "paid");
+    .in("payment_status", ["paid", "bank_pending"]);
 
   if (error) {
     return NextResponse.json({ message: error.message }, { status: 500 });
