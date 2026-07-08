@@ -277,11 +277,13 @@ export default function ApplyPage() {
 <p className="apply-description">
           안녕하세요. 고요입니다.
           <br />
+          <br />
           강의는 원데이 클래스로 하루 3시간 동안 진행됩니다.
           <br />
           처음 사용하시는 분들도 따라오실 수 있도록
           <br />
           D5의 처음부터 각 이미지에 맞는 표현법까지의 방법을 다루고 있습니다.
+          <br />
           <br />
           아래 정보를 작성해주시고 원하시는 강의를 선택 후
           <br />
