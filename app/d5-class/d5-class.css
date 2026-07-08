@@ -3,10 +3,11 @@
   background: #000;
   color: #fff;
   font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  padding-inline: 24px;
 }
 
 .d5-detail-gallery {
-  width: min(100%, 1080px);
+  width: min(100%, 920px);
   margin: 0 auto;
 }
 
@@ -24,7 +25,7 @@
 .d5-detail-admin {
   display: flex;
   justify-content: center;
-  width: min(100%, 1080px);
+  width: min(100%, 920px);
   margin: 0 auto;
   padding: 32px 20px calc(112px + env(safe-area-inset-bottom, 0px));
   background: #000;
@@ -72,6 +73,10 @@
 }
 
 @media (max-width: 640px) {
+  .d5-detail-page {
+    padding-inline: 0;
+  }
+
   .d5-detail-gallery,
   .d5-detail-admin {
     width: 100%;

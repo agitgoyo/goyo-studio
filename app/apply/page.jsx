@@ -400,7 +400,7 @@ export default function ApplyPage() {
           </div>
 
           <div className="apply-final">
-            <p>총 5시간 원데이 집중 강의</p>
+            <p>총 3시간 원데이 집중 강의</p>
             <p>실무에 바로 적용 가능</p>
             <p>소수 정예 피드백</p>
           </div>
