@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { getClassById } from "@/app/lib/classes-store";
+
+export const dynamic = "force-dynamic";
 
 function getSupabase() {
   return createClient(
@@ -13,23 +16,19 @@ export async function GET(request) {
   const classId = searchParams.get("classId");
 
   if (!classId) {
-    return NextResponse.json({ message: "classId 필요" }, { status: 400 });
+    return NextResponse.json({ message: "classId가 필요합니다." }, { status: 400 });
+  }
+
+  const classData = await getClassById(classId);
+
+  if (!classData) {
+    return NextResponse.json(
+      { message: "강의 정보를 찾을 수 없습니다." },
+      { status: 404 }
+    );
   }
 
   const supabase = getSupabase();
-
-  // 1) 클래스 정보
-  const { data: classData, error: classError } = await supabase
-    .from("classes")
-    .select("capacity")
-    .eq("id", classId)
-    .single();
-
-  if (classError) {
-    return NextResponse.json({ message: classError.message }, { status: 500 });
-  }
-
-  // 2) 결제 완료 수
   const { count, error } = await supabase
     .from("applications")
     .select("*", { count: "exact", head: true })
@@ -41,7 +40,7 @@ export async function GET(request) {
   }
 
   const paidCount = count || 0;
-  const capacity = classData.capacity;
+  const capacity = Number(classData.capacity || 0);
   const remaining = Math.max(capacity - paidCount, 0);
 
   return NextResponse.json({

@@ -1,0 +1,11 @@
+[VS CODE] 배포
+
+
+cd C:\Users\USER\Desktop\goyo-studio
+$env:NO_UPDATE_NOTIFIER='1'
+$env:XDG_DATA_HOME='C:\Users\USER\Desktop\goyo-studio\.vercel-global'
+$env:HTTP_PROXY=''
+$env:HTTPS_PROXY=''
+$env:http_proxy=''
+$env:https_proxy=''
+node node_modules\vercel\dist\vc.js deploy --prod --yes

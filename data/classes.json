@@ -1,0 +1,62 @@
+[
+  {
+    "id": "실내투시도",
+    "title": "실내투시도",
+    "date": "06-26(금)",
+    "time_text": "오후 1시~6시",
+    "price": 180000,
+    "capacity": 9,
+    "sort_order": 1,
+    "is_active": true
+  },
+  {
+    "id": "왕초보반-2",
+    "title": "왕초보반",
+    "date": "07-11(토)",
+    "time_text": "오전 9시~12시",
+    "price": 120000,
+    "capacity": 8,
+    "sort_order": 2,
+    "is_active": true
+  },
+  {
+    "id": "완성도반",
+    "title": "완성도반",
+    "date": "07-11(토)",
+    "time_text": "오후 1시~4시",
+    "price": 120000,
+    "capacity": 8,
+    "sort_order": 3,
+    "is_active": true
+  },
+  {
+    "id": "투시도반",
+    "title": "투시도반",
+    "date": "06-12(금)",
+    "time_text": "오후 1시~6시",
+    "price": 180000,
+    "capacity": 8,
+    "sort_order": 99,
+    "is_active": false
+  },
+  {
+    "id": "왕초보반",
+    "title": "왕초보반",
+    "date": "06-20(토)",
+    "time_text": "오전 9시~12시",
+    "price": 120000,
+    "capacity": 9,
+    "sort_order": 99,
+    "is_active": false
+  },
+  {
+    "id": "조감도반-mpw2odt0",
+    "title": "완성도반",
+    "date": "06-20(토)",
+    "time_text": "오후 1시~4시",
+    "price": 120000,
+    "capacity": 9,
+    "sort_order": 99,
+    "is_active": false
+  }
+]

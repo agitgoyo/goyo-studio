@@ -96,8 +96,8 @@ export default function Page() {
     <>
       <style>{`
         :root {
-          --bg: #f4f1eb;
-          --paper: #fffaf2;
+          --bg: #fcfcfa;
+          --paper: #ffffff;
           --ink: #181816;
           --muted: #77736b;
           --line: #ddd5c8;
@@ -131,7 +131,7 @@ export default function Page() {
           position: sticky;
           top: 0;
           z-index: 30;
-          background: rgba(244, 241, 235, 0.82);
+          background: rgba(252, 252, 250, 0.86);
           backdrop-filter: blur(18px);
           border-bottom: 1px solid rgba(221, 213, 200, 0.75);
         }
@@ -186,7 +186,7 @@ export default function Page() {
           padding: 8px 12px;
           border: 1px solid var(--line);
           border-radius: 999px;
-          background: rgba(255, 250, 242, 0.65);
+          background: rgba(255, 255, 255, 0.78);
           color: var(--accent);
           font-size: 13px;
           font-weight: 800;
@@ -199,6 +199,29 @@ export default function Page() {
           line-height: 0.88;
           letter-spacing: -0.085em;
           font-weight: 950;
+        }
+
+        .hero-logo-wrap {
+          width: min(100%, 420px);
+          margin-bottom: 14px;
+        }
+
+        .hero-logo {
+          width: 100%;
+          height: auto;
+          mix-blend-mode: multiply;
+        }
+
+        .hero-heading-sr {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
         }
 
         .hero-desc {
@@ -457,7 +480,7 @@ export default function Page() {
         .services {
           position: relative;
           overflow: hidden;
-          background: #e4d8c8;
+          background: #f4f1eb;
         }
 
         .services::before {
@@ -762,7 +785,11 @@ export default function Page() {
           .nav-cta { display: none; }
           .hero { padding: 56px 0 54px; }
           section { padding: 62px 0; }
-          h1 { font-size: clamp(52px, 18vw, 88px); }
+
+          .hero-logo-wrap {
+            width: min(100%, 300px);
+            margin-bottom: 10px;
+          }
 
           .hero-actions,
           .contact-links {
@@ -814,11 +841,18 @@ export default function Page() {
             <div className="wrap hero-grid">
               <div>
                 <div className="eyebrow">Architect · Visualizer · Educator</div>
-                <h1>
-                  GOYO
-                  <br />
-                  STUDIO
-                </h1>
+                <div className="hero-logo-wrap">
+                  <Image
+                    className="hero-logo"
+                    src="/images/goyo-logo.png"
+                    alt="GOYO STUDIO 로고"
+                    width={933}
+                    height={626}
+                    priority
+                    sizes="(max-width: 560px) 88vw, (max-width: 960px) 70vw, 560px"
+                  />
+                </div>
+                <h1 className="hero-heading-sr">GOYO STUDIO</h1>
                 <p className="hero-desc">
                   고요스튜디오는 건축 설계, 공간 이미지, 렌더링 콘텐츠를 통해 생각이 있는
                   건축을 만들고 공유합니다. 설계자의 관점으로 공간을 읽고, 이미지로
@@ -1058,10 +1092,7 @@ export default function Page() {
               <strong>상호명</strong> 고요스튜디오 | <strong>대표자</strong> 한인용 |{" "}
               <strong>사업자등록번호</strong> 392-02-04286
               <br />
-              <strong>사업장 주소</strong> 경기도 수원시 장안구 천천로22번길 34 | <strong>대표번호</strong>  010 6529 7029
-             
-              <br />
-              
+              <strong>사업장 주소</strong> 경기도 수원시 장안구 천천로22번길 34 | <strong>대표번호</strong> 010 6529 7029
             </div>
           </div>
         </footer>

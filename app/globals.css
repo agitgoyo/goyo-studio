@@ -145,17 +145,55 @@ body {
 
 
 @media (max-width: 640px) {
+  .apply-page {
+    align-items: flex-start;
+    padding: 72px 14px 48px;
+  }
+
   .apply-card {
-    padding: 32px 22px;
+    padding: 28px 18px;
     border-radius: 22px;
   }
 
   .apply-card h1 {
     font-size: 28px;
+    line-height: 1.15;
   }
 
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .apply-label {
+    font-size: 13px;
+    padding: 7px 12px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 16px;
+  }
+
+  .submit-button {
+    min-height: 54px;
+    padding: 16px 20px;
+    font-size: 15px;
+  }
+
+  .apply-final {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .apply-final p {
+    font-size: 15px;
   }
 }
 
@@ -239,6 +277,23 @@ body {
   .class-desc br {
     display: none;
   }
+
+  .capacity-box {
+    padding: 16px 18px;
+    border-radius: 16px;
+    margin-bottom: 18px;
+  }
+
+  .capacity-box strong {
+    font-size: 15px;
+  }
+
+  .capacity-box p,
+  .payment-review-notice,
+  .apply-notice {
+    font-size: 13px;
+    line-height: 1.7;
+  }
 }
 
 .submit-button:disabled {
@@ -289,4 +344,193 @@ body {
 
 .bank-button:hover {
   background: #000000 !important;
+}
+
+.refund-policy-box {
+  margin-top: 18px;
+  padding: 18px 20px;
+  border: 1px solid #ddd6cc;
+  border-radius: 18px;
+  background: #faf8f5;
+  text-align: center;
+}
+
+.refund-policy-summary {
+  margin: 0 0 14px;
+  color: #5c554c;
+  font-size: 14px;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.refund-policy-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: #efe6d8;
+  color: #171717;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.refund-policy-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.refund-policy-page {
+  min-height: 100vh;
+  padding: 100px 20px 72px;
+  background: #f6f3ee;
+  color: #1f1f1f;
+}
+
+.refund-policy-card {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 28px;
+  padding: 48px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+}
+
+.refund-policy-head {
+  margin-bottom: 34px;
+}
+
+.refund-policy-label {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #dfd0b6;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.refund-policy-head h1 {
+  margin: 0 0 14px;
+  font-size: 38px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.refund-policy-head p,
+.refund-policy-section p {
+  margin: 0;
+  color: #4e4942;
+  line-height: 1.8;
+  word-break: keep-all;
+}
+
+.refund-policy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.refund-policy-step {
+  padding: 24px 22px;
+  border-radius: 22px;
+  background: #faf8f5;
+  border: 1px solid #e3dbd0;
+}
+
+.refund-policy-step h2,
+.refund-policy-section h2 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.refund-policy-step h2 {
+  letter-spacing: -0.04em;
+  font-size: 20px;
+}
+
+.refund-policy-step p {
+  margin: 0;
+  color: #8a5a2b;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+.refund-policy-section {
+  margin-top: 22px;
+  padding: 24px 0 0;
+  border-top: 1px solid #ece5da;
+}
+
+.refund-policy-list {
+  margin: 0;
+  padding-left: 20px;
+  color: #4e4942;
+  line-height: 1.8;
+}
+
+.refund-policy-actions {
+  margin-top: 34px;
+}
+
+.refund-policy-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: #1f1f1f;
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+@media (max-width: 640px) {
+  .refund-policy-box {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .refund-policy-summary,
+  .refund-policy-list {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .refund-policy-page {
+    padding: 72px 14px 48px;
+  }
+
+  .refund-policy-card {
+    padding: 28px 18px;
+    border-radius: 22px;
+  }
+
+  .refund-policy-head h1 {
+    font-size: 30px;
+    line-height: 1.15;
+  }
+
+  .refund-policy-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .refund-policy-step {
+    padding: 20px 18px;
+    border-radius: 18px;
+  }
+
+  .refund-policy-step h2,
+  .refund-policy-section h2 {
+    font-size: 20px;
+  }
 }

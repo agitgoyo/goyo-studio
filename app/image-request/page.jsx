@@ -337,6 +337,64 @@ export default function ImageRequestPage() {
             padding: 28px;
           }
         }
+
+        @media (max-width: 640px) {
+          .image-hero {
+            padding: 72px 18px 52px;
+          }
+
+          .image-hero p,
+          .intro-card p,
+          .notice-box ul,
+          .process-card p,
+          .form-card,
+          .mail-note {
+            font-size: 15px;
+            line-height: 1.75;
+          }
+
+          .image-container {
+            padding: 44px 18px;
+          }
+
+          .intro-card,
+          .form-card,
+          .notice-box,
+          .price-card,
+          .process-card {
+            padding: 22px 18px;
+            border-radius: 22px;
+          }
+
+          .section-title h2 {
+            line-height: 1.18;
+          }
+
+          .price-grid,
+          .process-grid {
+            gap: 14px;
+          }
+
+          .price-card {
+            min-height: auto;
+          }
+
+          .form-row {
+            grid-template-columns: 1fr;
+            gap: 14px;
+          }
+
+          .request-form input,
+          .request-form select,
+          .request-form textarea,
+          .submit-btn {
+            font-size: 16px;
+          }
+
+          .submit-btn {
+            min-height: 52px;
+          }
+        }
       `}</style>
 
       <section className="image-hero">
