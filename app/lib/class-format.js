@@ -27,7 +27,7 @@ export function formatClassOptionLabel(item) {
   const snapshot = formatClassSnapshot(item);
   const price = Number(item.price);
   const priceLabel = Number.isFinite(price)
-    ? `${price.toLocaleString()} KRW`
+    ? `${price.toLocaleString()}원`
     : "";
 
   return [snapshot, priceLabel].filter(Boolean).join(" - ");
@@ -41,6 +41,6 @@ export function formatClassMeta(item) {
   return [
     String(item.date || "").trim(),
     String(item.time_text || "").trim(),
-    Number.isFinite(price) ? `${price.toLocaleString()} KRW` : "",
+    Number.isFinite(price) ? `${price.toLocaleString()}원` : "",
   ].filter(Boolean);
 }

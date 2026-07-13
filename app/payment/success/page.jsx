@@ -30,7 +30,7 @@ function PaymentSuccessContent() {
 
       if (!paymentKey || !orderId || !amount) {
         setStatus("error");
-        setErrorMessage("Invalid payment information.");
+        setErrorMessage("결제 정보가 올바르지 않습니다.");
         return;
       }
 
@@ -41,7 +41,7 @@ function PaymentSuccessContent() {
         setPaymentData({
           orderId,
           totalAmount: Number(amount),
-          method: "Already confirmed",
+          method: "확인 완료",
         });
         return;
       }
@@ -49,7 +49,7 @@ function PaymentSuccessContent() {
       try {
         if (!checkoutPayload?.classId) {
           throw new Error(
-            "Application data is missing. Please try the payment again."
+            "신청 정보가 없어 결제를 확인할 수 없습니다. 다시 결제를 시도해주세요."
           );
         }
 
@@ -76,7 +76,7 @@ function PaymentSuccessContent() {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || "Payment confirmation failed.");
+          throw new Error(data.message || "결제 확인에 실패했습니다.");
         }
 
         sessionStorage.setItem(`confirmed_${orderId}`, "true");
@@ -86,7 +86,7 @@ function PaymentSuccessContent() {
       } catch (error) {
         console.error(error);
         setErrorMessage(
-          error?.message || "An error occurred while confirming payment."
+          error?.message || "결제 확인 중 오류가 발생했습니다."
         );
         setStatus("error");
       }
@@ -101,31 +101,31 @@ function PaymentSuccessContent() {
         {status === "confirming" ? (
           <>
             <p style={styles.label}>PAYMENT</p>
-            <h1 style={styles.title}>Confirming payment</h1>
-            <p style={styles.text}>Please wait a moment.</p>
+            <h1 style={styles.title}>결제를 확인하고 있습니다.</h1>
+            <p style={styles.text}>잠시만 기다려주세요.</p>
           </>
         ) : null}
 
         {status === "success" ? (
           <>
             <p style={styles.label}>PAYMENT COMPLETE</p>
-            <h1 style={styles.title}>Payment completed</h1>
+            <h1 style={styles.title}>강의 결제가 완료되었습니다.</h1>
             <p style={styles.text}>
-              Your class application has been received successfully.
+              수강 신청이 정상적으로 접수되었습니다.
               <br />
-              A confirmation has been sent to Goyo Studio.
+              신청 정보가 고요스튜디오로 전송되었습니다.
             </p>
 
             {paymentData ? (
               <div style={styles.infoBox}>
-                <p>Order ID: {paymentData.orderId}</p>
-                <p>Amount: {paymentData.totalAmount?.toLocaleString()} KRW</p>
-                <p>Method: {paymentData.method}</p>
+                <p>주문번호: {paymentData.orderId}</p>
+                <p>결제금액: {paymentData.totalAmount?.toLocaleString()}원</p>
+                <p>결제수단: {paymentData.method}</p>
               </div>
             ) : null}
 
             <Link href="/" style={styles.button}>
-              Back to home
+              메인으로 돌아가기
             </Link>
           </>
         ) : null}
@@ -133,14 +133,13 @@ function PaymentSuccessContent() {
         {status === "error" ? (
           <>
             <p style={styles.label}>PAYMENT ERROR</p>
-            <h1 style={styles.title}>Payment confirmation failed</h1>
+            <h1 style={styles.title}>결제 확인에 실패했습니다.</h1>
             <p style={styles.text}>
-              If payment was completed but this screen is shown, please contact
-              Goyo Studio.
+              결제는 되었는데 이 화면이 보인다면, 고요스튜디오에 문의해 주세요.
             </p>
             {errorMessage ? <p style={styles.errorText}>{errorMessage}</p> : null}
             <Link href="/apply" style={styles.button}>
-              Try again
+              다시 시도하기
             </Link>
           </>
         ) : null}
@@ -154,7 +153,7 @@ function PaymentLoading() {
     <main style={styles.page}>
       <section style={styles.card}>
         <p style={styles.label}>PAYMENT</p>
-        <h1 style={styles.title}>Checking payment information</h1>
+        <h1 style={styles.title}>결제 정보를 확인하고 있습니다.</h1>
       </section>
     </main>
   );

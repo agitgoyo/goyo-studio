@@ -24,14 +24,23 @@ export default function ApplyPage() {
   const [isLoadingClasses, setIsLoadingClasses] = useState(true);
   const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
   const [isStartingPayment, setIsStartingPayment] = useState(false);
+  const [isLoadingWidget, setIsLoadingWidget] = useState(false);
+  const [widgetError, setWidgetError] = useState("");
   const latestCapacityRequestRef = useRef(0);
+  const widgetsRef = useRef(null);
+  const paymentWidgetRef = useRef(null);
+  const agreementWidgetRef = useRef(null);
+  const renderedClassIdRef = useRef("");
 
+  const selectedClass =
+    classes.find((item) => item.id === selectedClassId) || null;
   const isFull = capacity?.isFull;
   const formBusy =
     isLoadingClasses ||
     isCheckingCapacity ||
     isSubmittingApplication ||
-    isStartingPayment;
+    isStartingPayment ||
+    isLoadingWidget;
 
   const fetchCapacity = async (classId) => {
     const requestId = Date.now() + Math.random();
@@ -51,7 +60,9 @@ export default function ApplyPage() {
 
       if (!response.ok) {
         setCapacity(null);
-        return { error: data.message || "Failed to check seats." };
+        return {
+          error: data.message || "정원 확인 중 오류가 발생했습니다.",
+        };
       }
 
       setCapacity(data);
@@ -62,7 +73,9 @@ export default function ApplyPage() {
       }
 
       console.error(error);
-      return { error: "Failed to check seats." };
+      return {
+        error: "정원 확인 중 오류가 발생했습니다.",
+      };
     } finally {
       if (latestCapacityRequestRef.current === requestId) {
         setIsCheckingCapacity(false);
@@ -79,14 +92,14 @@ export default function ApplyPage() {
         const data = await response.json();
 
         if (!response.ok) {
-          alert(data.message || "Could not load classes.");
+          alert(data.message || "강의 목록을 불러오지 못했습니다.");
           return;
         }
 
         setClasses(data);
       } catch (error) {
         console.error(error);
-        alert("An error occurred while loading classes.");
+        alert("강의 목록을 불러오는 중 오류가 발생했습니다.");
       } finally {
         setIsLoadingClasses(false);
       }
@@ -95,11 +108,85 @@ export default function ApplyPage() {
     void loadClasses();
   }, []);
 
+  useEffect(() => {
+    const setupWidgets = async () => {
+      if (!selectedClass) {
+        setWidgetError("");
+        renderedClassIdRef.current = "";
+        return;
+      }
+
+      const widgetClientKey = process.env.NEXT_PUBLIC_TOSS_WIDGET_CLIENT_KEY;
+
+      if (!widgetClientKey) {
+        setWidgetError(
+          "토스 결제위젯 키가 설정되지 않았습니다. NEXT_PUBLIC_TOSS_WIDGET_CLIENT_KEY를 추가해주세요."
+        );
+        return;
+      }
+
+      try {
+        setIsLoadingWidget(true);
+        setWidgetError("");
+
+        if (!widgetsRef.current) {
+          const tossPayments = await loadTossPayments(widgetClientKey);
+          widgetsRef.current = tossPayments.widgets({ customerKey: ANONYMOUS });
+        }
+
+        await widgetsRef.current.setAmount({
+          currency: "KRW",
+          value: Number(selectedClass.price),
+        });
+
+        if (renderedClassIdRef.current !== selectedClass.id) {
+          if (paymentWidgetRef.current?.destroy) {
+            await paymentWidgetRef.current.destroy();
+            paymentWidgetRef.current = null;
+          }
+
+          if (agreementWidgetRef.current?.destroy) {
+            await agreementWidgetRef.current.destroy();
+            agreementWidgetRef.current = null;
+          }
+
+          const paymentVariantKey =
+            process.env.NEXT_PUBLIC_TOSS_WIDGET_VARIANT_KEY || undefined;
+          const agreementVariantKey =
+            process.env.NEXT_PUBLIC_TOSS_AGREEMENT_VARIANT_KEY || undefined;
+
+          paymentWidgetRef.current =
+            await widgetsRef.current.renderPaymentMethods({
+              selector: "#toss-payment-methods",
+              variantKey: paymentVariantKey,
+            });
+
+          agreementWidgetRef.current = await widgetsRef.current.renderAgreement({
+            selector: "#toss-agreement",
+            variantKey: agreementVariantKey,
+          });
+
+          renderedClassIdRef.current = selectedClass.id;
+        }
+      } catch (error) {
+        console.error(error);
+        setWidgetError(
+          error?.message || "결제 위젯을 불러오지 못했습니다. 잠시 후 다시 시도해주세요."
+        );
+      } finally {
+        setIsLoadingWidget(false);
+      }
+    };
+
+    void setupWidgets();
+  }, [selectedClass]);
+
   const handleClassChange = (event) => {
     const nextClassId = event.target.value;
 
     setSelectedClassId(nextClassId);
     setCapacity(null);
+    setWidgetError("");
 
     if (!nextClassId) {
       latestCapacityRequestRef.current += 1;
@@ -130,7 +217,15 @@ export default function ApplyPage() {
     const selected = classes.find((item) => item.id === classId);
 
     if (!name || !phone || !email || !classId || !selected) {
-      alert("Please fill in all required fields.");
+      alert("필수 정보를 모두 입력해주세요.");
+      return;
+    }
+
+    if (!widgetsRef.current) {
+      alert(
+        widgetError ||
+          "결제 위젯이 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요."
+      );
       return;
     }
 
@@ -145,29 +240,20 @@ export default function ApplyPage() {
       }
 
       if (!capacityData) {
-        alert("Failed to check seats.");
+        alert("정원 확인 중 오류가 발생했습니다.");
         return;
       }
 
       if (capacityData.isFull) {
-        alert("This class is sold out.");
+        alert("해당 강의는 정원이 마감되었습니다.");
         return;
       }
 
-      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
-
-      if (!clientKey) {
-        alert("NEXT_PUBLIC_TOSS_CLIENT_KEY is not set.");
-        return;
-      }
-
-      const tossPayments = await loadTossPayments(clientKey);
-      const payment = tossPayments.payment({ customerKey: ANONYMOUS });
       const orderId = `goyo_${Date.now()}_${Math.random()
         .toString(36)
         .slice(2, 8)}`;
       const classSnapshot = formatClassSnapshot(selected);
-      const orderName = `${classSnapshot} ticket`;
+      const orderName = `${classSnapshot} 수강권`;
       const siteUrl = getSiteUrl();
 
       sessionStorage.setItem(
@@ -184,26 +270,14 @@ export default function ApplyPage() {
         })
       );
 
-      await payment.requestPayment({
-        method: "CARD",
-        amount: {
-          currency: "KRW",
-          value: Number(selected.price),
-        },
+      await widgetsRef.current.requestPayment({
         orderId,
         orderName,
-        customerName: String(name),
-        customerEmail: String(email),
-        customerMobilePhone: String(phone).replace(/\D/g, ""),
         successUrl: `${siteUrl}/payment/success`,
         failUrl: `${siteUrl}/payment/fail`,
-        windowTarget: "self",
-        card: {
-          useEscrow: false,
-          flowMode: "DEFAULT",
-          useCardPoint: false,
-          useAppCardOnly: false,
-        },
+        customerEmail: String(email),
+        customerName: String(name),
+        customerMobilePhone: String(phone).replace(/\D/g, ""),
       });
     } catch (error) {
       console.error(error);
@@ -211,8 +285,8 @@ export default function ApplyPage() {
 
       alert(
         details
-          ? `Failed to open the payment window.\n${details}`
-          : "Failed to open the payment window. Please try again."
+          ? `결제창을 여는 중 문제가 발생했습니다.\n${details}`
+          : "결제창을 여는 중 문제가 발생했습니다. 다시 시도해주세요."
       );
     } finally {
       setIsStartingPayment(false);
@@ -234,7 +308,7 @@ export default function ApplyPage() {
     const selected = classes.find((item) => item.id === classId);
 
     if (!name || !phone || !email || !classId || !selected) {
-      alert("Please fill in all required fields.");
+      alert("필수 정보를 모두 입력해주세요.");
       return;
     }
 
@@ -262,7 +336,7 @@ export default function ApplyPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.message || "Failed to submit the application.");
+        alert(data.message || "신청 접수에 실패했습니다.");
 
         if (response.status === 409 && selectedClassId) {
           await fetchCapacity(selectedClassId);
@@ -272,16 +346,17 @@ export default function ApplyPage() {
       }
 
       alert(
-        "Your application has been submitted. We will send payment and class details by email."
+        "수강 신청이 정상적으로 접수되었습니다. 메일로 결제 및 수강 안내를 보내드릴 예정이니 확인 부탁드립니다."
       );
       formElement.reset();
       setSelectedClassId("");
       setCapacity(null);
+      setWidgetError("");
       latestCapacityRequestRef.current += 1;
       setIsCheckingCapacity(false);
     } catch (error) {
       console.error(error);
-      alert("There was a problem submitting your application.");
+      alert("신청 접수 중 문제가 발생했습니다. 다시 시도해주세요.");
     } finally {
       setIsSubmittingApplication(false);
     }
@@ -290,29 +365,29 @@ export default function ApplyPage() {
   return (
     <main className="apply-page">
       <section className="apply-card">
-        <span className="apply-label">D5 One-day Class</span>
-        <h1>Apply for Class</h1>
+        <span className="apply-label">D5 원데이 클래스</span>
+        <h1>강의 신청</h1>
 
         <p className="apply-description">
-          Hello, this is Goyo.
+          안녕하세요. 고요입니다.
           <br />
           <br />
-          This is a one-day class that runs for 3 hours.
+          강의는 원데이 클래스로 하루 3시간 동안 진행됩니다.
           <br />
-          It is designed so beginners can follow along,
+          처음 사용하시는 분들도 따라오실 수 있도록
           <br />
-          covering D5 basics through image-specific expression methods.
+          D5의 기초부터 각 이미지에 맞는 표현법까지 다루고 있습니다.
         </p>
 
         <form className="apply-form" onSubmit={handleSubmitApplication}>
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="name">Name *</label>
+              <label htmlFor="name">이름 *</label>
               <input type="text" id="name" name="name" required />
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone">Phone *</label>
+              <label htmlFor="phone">연락처 *</label>
               <input
                 type="text"
                 id="phone"
@@ -324,13 +399,13 @@ export default function ApplyPage() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email *</label>
+            <label htmlFor="email">이메일 *</label>
             <input type="email" id="email" name="email" required />
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="classId">Class *</label>
+              <label htmlFor="classId">신청 강의 *</label>
               <select
                 id="classId"
                 name="classId"
@@ -339,7 +414,9 @@ export default function ApplyPage() {
                 onChange={handleClassChange}
               >
                 <option value="">
-                  {isLoadingClasses ? "Loading classes..." : "Select a class"}
+                  {isLoadingClasses
+                    ? "강의 목록을 불러오는 중..."
+                    : "강의를 선택해주세요"}
                 </option>
 
                 {classes.map((item) => (
@@ -351,81 +428,104 @@ export default function ApplyPage() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="job">Current Status</label>
+              <label htmlFor="job">현재 상태</label>
               <select id="job" name="job">
-                <option value="">Select</option>
-                <option value="student">Student</option>
-                <option value="job-seeker">Job Seeker</option>
-                <option value="working">Working</option>
-                <option value="freelancer">Freelancer</option>
-                <option value="other">Other</option>
+                <option value="">선택해주세요</option>
+                <option value="student">학생</option>
+                <option value="job-seeker">취준생</option>
+                <option value="working">실무자</option>
+                <option value="freelancer">프리랜서</option>
+                <option value="other">기타</option>
               </select>
             </div>
           </div>
 
           {selectedClassId ? (
             <div className={`capacity-box ${isFull ? "full" : ""}`}>
-              {isCheckingCapacity ? <p>Checking seats...</p> : null}
+              {isCheckingCapacity ? <p>정원을 확인하고 있습니다...</p> : null}
 
               {!isCheckingCapacity && capacity && !capacity.isFull ? (
                 <>
                   <strong>
-                    {capacity.paidCount} / {capacity.capacity} seats booked
+                    현재 {capacity.paidCount} / {capacity.capacity}명 신청 완료
                   </strong>
-                  <p>{capacity.remaining} seats left</p>
+                  <p>남은 자리 {capacity.remaining}명</p>
                 </>
               ) : null}
 
               {!isCheckingCapacity && capacity?.isFull ? (
                 <>
-                  <strong>Sold out</strong>
-                  <p>This class has reached its capacity.</p>
+                  <strong>마감되었습니다</strong>
+                  <p>해당 강의는 정원에 도달했습니다.</p>
                 </>
               ) : null}
             </div>
           ) : null}
 
           <div className="form-group">
-            <label htmlFor="level">Experience Level</label>
+            <label htmlFor="level">프로그램 사용 경험</label>
             <select id="level" name="level">
-              <option value="">Select</option>
-              <option value="beginner">First time</option>
-              <option value="basic">Basic usage</option>
-              <option value="intermediate">Some experience</option>
-              <option value="advanced">Using for work</option>
+              <option value="">선택해주세요</option>
+              <option value="beginner">처음 사용</option>
+              <option value="basic">기초 사용 가능</option>
+              <option value="intermediate">어느 정도 사용 가능</option>
+              <option value="advanced">실무에서 사용 중</option>
             </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="message">Questions / What you want to learn</label>
+            <label htmlFor="message">궁금한 점 / 배우고 싶은 내용</label>
             <textarea
               id="message"
               name="message"
-              placeholder="Tell us what you want to learn or what feels difficult right now."
+              placeholder="강의를 통해 배우고 싶은 내용이나 현재 어려운 점을 적어주세요."
             />
           </div>
 
           <div className="apply-final">
-            <p>3-hour focused one-day class</p>
-            <p>Practical and work-ready</p>
-            <p>Small-group feedback</p>
+            <p>총 3시간 원데이 집중 강의</p>
+            <p>실무에 바로 적용 가능</p>
+            <p>소수 정예 피드백</p>
           </div>
+
+          {selectedClass ? (
+            <div className="widget-section">
+              <p className="payment-review-notice">
+                아래에서 결제수단을 선택한 뒤 결제를 진행해주세요.
+              </p>
+              <div id="toss-payment-methods" className="toss-widget-box" />
+              <div
+                id="toss-agreement"
+                className="toss-widget-box toss-agreement-box"
+              />
+            </div>
+          ) : null}
+
+          {widgetError ? (
+            <p className="payment-review-notice" style={{ color: "#c45e42" }}>
+              {widgetError}
+            </p>
+          ) : null}
 
           <button
             type="button"
             className="submit-button payment-primary-button"
             onClick={handlePayment}
-            disabled={formBusy || !selectedClassId || isFull}
+            disabled={
+              formBusy || !selectedClassId || isFull || Boolean(widgetError)
+            }
           >
             {isFull
-              ? "Sold out"
-              : isStartingPayment
-                ? "Preparing payment..."
-                : "Pay for Class"}
+              ? "마감되었습니다"
+              : isLoadingWidget
+                ? "결제 위젯을 불러오고 있습니다..."
+                : isStartingPayment
+                  ? "결제를 준비하고 있습니다..."
+                  : "강의 결제하기"}
           </button>
 
           <p className="payment-review-notice">
-            Your booking is confirmed after card payment is completed.
+            카드 결제가 완료되면 신청이 최종 확정됩니다.
           </p>
 
           <button
@@ -434,26 +534,24 @@ export default function ApplyPage() {
             disabled={formBusy || !selectedClassId || isFull}
           >
             {isFull
-              ? "Sold out"
+              ? "마감되었습니다"
               : isSubmittingApplication
-                ? "Submitting..."
-                : "Submit Application Only"}
+                ? "신청 접수 중입니다..."
+                : "수강 신청만 보내기"}
           </button>
 
           <p className="apply-notice">
-            If you want to send the application first without payment, use the
-            button above and we will email you the next steps.
+            수강 신청만 먼저 보내고 싶은 경우 위 버튼으로 접수해주시면 안내 메일을 보내드립니다.
           </p>
 
           <div className="refund-policy-box">
             <p className="refund-policy-summary">
-              Please check the refund policy before payment.
+              결제 전에 환불 기준을 꼭 확인해 주세요.
               <br />
-              Full refund up to 7 days before class, 50% refund up to 3 days
-              before class, and no refund after that.
+              수업 7일 전까지는 전액 환불, 3일 전까지는 50% 환불, 그 이후에는 환불이 어렵습니다.
             </p>
             <Link href="/refund-policy" className="refund-policy-link">
-              View refund policy
+              환불정책 보기
             </Link>
           </div>
         </form>

@@ -345,6 +345,22 @@ body {
   color: #171717;
 }
 
+.widget-section {
+  margin: 18px 0 10px;
+}
+
+.toss-widget-box {
+  margin-top: 14px;
+  border: 1px solid #ddd6cc;
+  border-radius: 18px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.toss-agreement-box {
+  margin-top: 10px;
+}
+
 .bank-button {
   margin-top: 0;
   background: #171717 !important;
