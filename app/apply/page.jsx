@@ -197,6 +197,13 @@ export default function ApplyPage() {
         customerMobilePhone: String(phone).replace(/\D/g, ""),
         successUrl: `${siteUrl}/payment/success`,
         failUrl: `${siteUrl}/payment/fail`,
+        windowTarget: "self",
+        card: {
+          useEscrow: false,
+          flowMode: "DEFAULT",
+          useCardPoint: false,
+          useAppCardOnly: false,
+        },
       });
     } catch (error) {
       console.error(error);
