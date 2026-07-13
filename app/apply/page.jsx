@@ -13,14 +13,21 @@ export default function ApplyPage() {
   const [isLoadingClasses, setIsLoadingClasses] = useState(true);
   const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
   const [isStartingPayment, setIsStartingPayment] = useState(false);
+  const [isPreparingPaymentWidget, setIsPreparingPaymentWidget] = useState(false);
+  const [paymentWidgetError, setPaymentWidgetError] = useState("");
   const latestCapacityRequestRef = useRef(0);
+  const widgetsRef = useRef(null);
+  const paymentMethodWidgetRef = useRef(null);
+  const agreementWidgetRef = useRef(null);
 
+  const selectedClass = classes.find((item) => item.id === selectedClassId) || null;
   const isFull = capacity?.isFull;
   const formBusy =
     isLoadingClasses ||
     isCheckingCapacity ||
     isSubmittingApplication ||
-    isStartingPayment;
+    isStartingPayment ||
+    isPreparingPaymentWidget;
 
   const fetchCapacity = async (classId) => {
     const requestId = Date.now() + Math.random();
@@ -30,9 +37,7 @@ export default function ApplyPage() {
     try {
       const response = await fetch(
         `/api/applications/capacity?classId=${encodeURIComponent(classId)}`,
-        {
-          cache: "no-store",
-        }
+        { cache: "no-store" }
       );
       const data = await response.json();
 
@@ -68,9 +73,7 @@ export default function ApplyPage() {
   useEffect(() => {
     const loadClasses = async () => {
       try {
-        const response = await fetch("/api/classes", {
-          cache: "no-store",
-        });
+        const response = await fetch("/api/classes", { cache: "no-store" });
         const data = await response.json();
 
         if (!response.ok) {
@@ -87,8 +90,108 @@ export default function ApplyPage() {
       }
     };
 
-    loadClasses();
+    void loadClasses();
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const destroyWidgets = async () => {
+      widgetsRef.current = null;
+
+      const widgetsToDestroy = [
+        paymentMethodWidgetRef.current,
+        agreementWidgetRef.current,
+      ].filter(Boolean);
+
+      paymentMethodWidgetRef.current = null;
+      agreementWidgetRef.current = null;
+
+      if (!widgetsToDestroy.length) {
+        return;
+      }
+
+      await Promise.allSettled(widgetsToDestroy.map((widget) => widget.destroy()));
+    };
+
+    const setupPaymentWidget = async () => {
+      await destroyWidgets();
+
+      if (!selectedClass || isFull) {
+        setPaymentWidgetError("");
+        setIsPreparingPaymentWidget(false);
+        return;
+      }
+
+      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
+
+      if (!clientKey) {
+        setPaymentWidgetError("토스페이먼츠 Client Key가 설정되지 않았습니다.");
+        setIsPreparingPaymentWidget(false);
+        return;
+      }
+
+      try {
+        setIsPreparingPaymentWidget(true);
+        setPaymentWidgetError("");
+
+        const tossPayments = await loadTossPayments(clientKey);
+
+        if (cancelled) {
+          return;
+        }
+
+        const widgets = tossPayments.widgets({ customerKey: ANONYMOUS });
+
+        await widgets.setAmount({
+          currency: "KRW",
+          value: Number(selectedClass.price),
+        });
+
+        if (cancelled) {
+          return;
+        }
+
+        const paymentMethodWidget = await widgets.renderPaymentMethods({
+          selector: "#payment-method",
+        });
+        const agreementWidget = await widgets.renderAgreement({
+          selector: "#agreement",
+        });
+
+        if (cancelled) {
+          await Promise.allSettled([
+            paymentMethodWidget.destroy(),
+            agreementWidget.destroy(),
+          ]);
+          return;
+        }
+
+        widgetsRef.current = widgets;
+        paymentMethodWidgetRef.current = paymentMethodWidget;
+        agreementWidgetRef.current = agreementWidget;
+      } catch (error) {
+        console.error(error);
+
+        if (!cancelled) {
+          setPaymentWidgetError(
+            "결제 위젯을 불러오지 못했습니다. 잠시 후 다시 시도해주세요."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setIsPreparingPaymentWidget(false);
+        }
+      }
+    };
+
+    void setupPaymentWidget();
+
+    return () => {
+      cancelled = true;
+      void destroyWidgets();
+    };
+  }, [selectedClass, isFull]);
 
   const handleClassChange = (event) => {
     const nextClassId = event.target.value;
@@ -99,18 +202,23 @@ export default function ApplyPage() {
     if (!nextClassId) {
       latestCapacityRequestRef.current += 1;
       setIsCheckingCapacity(false);
+      setPaymentWidgetError("");
       return;
     }
 
-    fetchCapacity(nextClassId);
+    void fetchCapacity(nextClassId);
   };
 
   const handlePayment = async (event) => {
     event.preventDefault();
 
     const formElement = event.currentTarget.closest("form");
-    const formData = new FormData(formElement);
 
+    if (!formElement) {
+      return;
+    }
+
+    const formData = new FormData(formElement);
     const name = formData.get("name");
     const phone = formData.get("phone");
     const email = formData.get("email");
@@ -118,7 +226,6 @@ export default function ApplyPage() {
     const job = formData.get("job") || "";
     const level = formData.get("level") || "";
     const message = formData.get("message") || "";
-
     const selected = classes.find((item) => item.id === classId);
 
     if (!name || !phone || !email || !classId || !selected) {
@@ -146,22 +253,16 @@ export default function ApplyPage() {
         return;
       }
 
-      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
-
-      if (!clientKey) {
-        alert("토스페이먼츠 Client Key가 설정되지 않았습니다.");
+      if (!widgetsRef.current) {
+        alert("결제 위젯이 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.");
         return;
       }
-
-      const tossPayments = await loadTossPayments(clientKey);
-      const payment = tossPayments.payment({ customerKey: ANONYMOUS });
 
       const orderId = `goyo_${Date.now()}_${Math.random()
         .toString(36)
         .slice(2, 8)}`;
       const classSnapshot = formatClassSnapshot(selected);
       const orderName = `${classSnapshot} 수강권`;
-
       const params = new URLSearchParams({
         name: String(name),
         phone: String(phone),
@@ -172,15 +273,9 @@ export default function ApplyPage() {
         level: String(level),
         message: String(message),
       });
-
       const siteUrl = window.location.origin;
 
-      await payment.requestPayment({
-        method: "CARD",
-        amount: {
-          currency: "KRW",
-          value: Number(selected.price),
-        },
+      await widgetsRef.current.requestPayment({
         orderId,
         orderName,
         customerName: String(name),
@@ -210,7 +305,6 @@ export default function ApplyPage() {
     const job = formData.get("job") || "";
     const level = formData.get("level") || "";
     const message = formData.get("message") || "";
-
     const selected = classes.find((item) => item.id === classId);
 
     if (!name || !phone || !email || !classId || !selected) {
@@ -252,11 +346,12 @@ export default function ApplyPage() {
       }
 
       alert(
-        "수강신청이 정상적으로 접수 되었습니다. 메일로 결제 및 수강안내 보내드렸습니다. 확인 부탁드립니다. ^^"
+        "수강신청이 정상적으로 접수되었습니다. 메일로 결제 및 수강안내를 보내드렸으니 확인 부탁드립니다. ^^"
       );
       formElement.reset();
       setSelectedClassId("");
       setCapacity(null);
+      setPaymentWidgetError("");
       latestCapacityRequestRef.current += 1;
       setIsCheckingCapacity(false);
     } catch (error) {
@@ -271,10 +366,9 @@ export default function ApplyPage() {
     <main className="apply-page">
       <section className="apply-card">
         <span className="apply-label">D5 렌더링 강의</span>
-
         <h1>강의 신청</h1>
 
-<p className="apply-description">
+        <p className="apply-description">
           안녕하세요. 고요입니다.
           <br />
           <br />
@@ -285,9 +379,9 @@ export default function ApplyPage() {
           D5의 처음부터 각 이미지에 맞는 표현법까지의 방법을 다루고 있습니다.
           <br />
           <br />
-          아래 정보를 작성해주시고 원하시는 강의를 선택 후
+          아래 정보를 작성해주시고 원하시는 강의를 선택해 주세요.
           <br />
-          신청해주시면 선착순 8명에 한하여 결제안내를 해드립니다.
+          카드 결제 완료 후 수강신청이 최종 확정됩니다.
           <br />
           <br />
           소수 정예로 진행되는 강의라 신중한 신청 부탁드립니다.
@@ -371,10 +465,9 @@ export default function ApplyPage() {
 
               {!isCheckingCapacity && capacity?.isFull && (
                 <>
-                  <strong>마감되었습니다</strong>
+                  <strong>마감되었습니다.</strong>
                   <p>
-                    해당 강의는 정원 {capacity.capacity}명이 모두 신청
-                    완료되었습니다.
+                    해당 강의는 정원 {capacity.capacity}명이 모두 신청 완료되었습니다.
                   </p>
                 </>
               )}
@@ -398,7 +491,7 @@ export default function ApplyPage() {
               id="message"
               name="message"
               placeholder="강의를 통해 배우고 싶은 내용이나 현재 어려운 점을 적어주세요."
-            ></textarea>
+            />
           </div>
 
           <div className="apply-final">
@@ -406,6 +499,43 @@ export default function ApplyPage() {
             <p>실무에 바로 적용 가능</p>
             <p>소수 정예 피드백</p>
           </div>
+
+          {selectedClassId && !isFull && (
+            <div className="payment-widget-section">
+              <p className="payment-widget-notice">
+                아래에서 결제수단을 선택한 뒤 결제를 진행해주세요.
+              </p>
+              <div id="payment-method" className="payment-widget-box" />
+              <div id="agreement" className="payment-agreement-box" />
+
+              {isPreparingPaymentWidget && (
+                <p className="payment-widget-helper">
+                  결제수단을 불러오는 중입니다...
+                </p>
+              )}
+
+              {paymentWidgetError && (
+                <p className="payment-widget-error">{paymentWidgetError}</p>
+              )}
+            </div>
+          )}
+
+          <button
+            type="button"
+            className="submit-button payment-primary-button"
+            onClick={handlePayment}
+            disabled={formBusy || !selectedClassId || isFull || !!paymentWidgetError}
+          >
+            {isFull
+              ? "마감되었습니다"
+              : isStartingPayment
+                ? "결제를 준비하고 있습니다..."
+                : "강의 결제하기"}
+          </button>
+
+          <p className="payment-review-notice">
+            카드 결제가 완료되면 신청이 최종 확정됩니다.
+          </p>
 
           <button
             type="submit"
@@ -416,33 +546,18 @@ export default function ApplyPage() {
               ? "마감되었습니다"
               : isSubmittingApplication
                 ? "신청 접수 중입니다..."
-                : "수강신청 보내기"}
+                : "수강 신청만 보내기"}
           </button>
 
           <p className="apply-notice">
-            결제 안내 문자를 받으시고 결제를 완료해주셔야 수강신청이 최종
-            확정됩니다.
+            수강 신청만 먼저 보내고 싶은 경우 위 버튼으로 접수해주시면 안내 메일을 보내드립니다.
           </p>
 
-          <p className="payment-review-notice">
-            현재 카드 결제 서비스 심사 중입니다. 정식 오픈 전까지는 위의
-            <strong> 수강신청 보내기</strong> 버튼을 이용해주세요.
-          </p>
-
-          <button
-            type="button"
-            className="submit-button payment-review-button"
-            onClick={handlePayment}
-            disabled={formBusy || !selectedClassId || isFull}
-          >
-            {isStartingPayment ? "결제를 준비하고 있습니다..." : "강의 결제하기"}
-          </button>
           <div className="refund-policy-box">
             <p className="refund-policy-summary">
               결제 전에 환불 기준을 꼭 확인해 주세요.
               <br />
-              수업 7일 전까지는 전액 환불, 3일 전까지는 50% 환불, 그 이후와 당일은
-              환불이 어렵습니다.
+              수업 7일 전까지는 전액 환불, 3일 전까지는 50% 환불, 그 이후에는 환불이 어렵습니다.
             </p>
             <Link href="/refund-policy" className="refund-policy-link">
               환불정책 보기

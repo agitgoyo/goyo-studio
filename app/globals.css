@@ -323,6 +323,15 @@ body {
   transform: none !important;
 }
 
+.payment-primary-button {
+  background: #171717 !important;
+  color: #ffffff !important;
+}
+
+.payment-primary-button:hover {
+  background: #000000 !important;
+}
+
 .payment-review-notice {
   margin: 10px 0 14px;
   color: #8a5a2b;
@@ -334,6 +343,47 @@ body {
 
 .payment-review-notice strong {
   color: #171717;
+}
+
+.payment-widget-section {
+  margin: 18px 0;
+  padding: 18px 20px;
+  border: 1px solid #ddd6cc;
+  border-radius: 18px;
+  background: #faf8f5;
+}
+
+.payment-widget-box,
+.payment-agreement-box {
+  width: 100%;
+}
+
+.payment-agreement-box {
+  margin-top: 14px;
+}
+
+.payment-widget-helper,
+.payment-widget-error,
+.payment-widget-notice {
+  font-size: 14px;
+  line-height: 1.7;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.payment-widget-notice {
+  margin: 0 0 14px;
+  color: #5c554c;
+}
+
+.payment-widget-helper {
+  margin: 14px 0 0;
+  color: #6f665c;
+}
+
+.payment-widget-error {
+  margin: 14px 0 0;
+  color: #a23d2c;
 }
 
 .bank-button {

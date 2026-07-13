@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -15,6 +16,7 @@ function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState("confirming");
   const [paymentData, setPaymentData] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const confirmPayment = async () => {
@@ -22,20 +24,21 @@ function PaymentSuccessContent() {
       const orderId = searchParams.get("orderId");
       const amount = searchParams.get("amount");
 
-      const alreadyConfirmed = sessionStorage.getItem(`confirmed_${orderId}`);
-
-if (alreadyConfirmed) {
-  setStatus("success");
-  setPaymentData({
-    orderId,
-    totalAmount: Number(amount),
-    method: "확인 완료",
-  });
-  return;
-}
-
       if (!paymentKey || !orderId || !amount) {
         setStatus("error");
+        setErrorMessage("결제 정보가 올바르지 않습니다.");
+        return;
+      }
+
+      const alreadyConfirmed = sessionStorage.getItem(`confirmed_${orderId}`);
+
+      if (alreadyConfirmed) {
+        setStatus("success");
+        setPaymentData({
+          orderId,
+          totalAmount: Number(amount),
+          method: "확인 완료",
+        });
         return;
       }
 
@@ -49,13 +52,11 @@ if (alreadyConfirmed) {
             paymentKey,
             orderId,
             amount: Number(amount),
-
             name: searchParams.get("name") || "",
             phone: searchParams.get("phone") || "",
             email: searchParams.get("email") || "",
-            classType: searchParams.get("classType") || "",
             classId: searchParams.get("classId") || "",
-classType: searchParams.get("classType") || "",
+            classType: searchParams.get("classType") || "",
             job: searchParams.get("job") || "",
             level: searchParams.get("level") || "",
             message: searchParams.get("message") || "",
@@ -64,18 +65,21 @@ classType: searchParams.get("classType") || "",
 
         const data = await response.json();
 
-        
+        if (!response.ok) {
+          throw new Error(data.message || "결제 승인에 실패했습니다.");
+        }
 
         sessionStorage.setItem(`confirmed_${orderId}`, "true");
         setPaymentData(data);
         setStatus("success");
       } catch (error) {
         console.error(error);
+        setErrorMessage(error?.message || "결제 승인 중 오류가 발생했습니다.");
         setStatus("error");
       }
     };
 
-    confirmPayment();
+    void confirmPayment();
   }, [searchParams]);
 
   return (
@@ -107,9 +111,9 @@ classType: searchParams.get("classType") || "",
               </div>
             )}
 
-            <a href="/" style={styles.button}>
+            <Link href="/" style={styles.button}>
               메인으로 돌아가기
-            </a>
+            </Link>
           </>
         )}
 
@@ -120,9 +124,10 @@ classType: searchParams.get("classType") || "",
             <p style={styles.text}>
               결제는 되었는데 이 화면이 보인다면, 고요스튜디오에 문의해주세요.
             </p>
-            <a href="/apply" style={styles.button}>
+            {errorMessage ? <p style={styles.errorText}>{errorMessage}</p> : null}
+            <Link href="/apply" style={styles.button}>
               다시 시도하기
-            </a>
+            </Link>
           </>
         )}
       </section>
@@ -173,6 +178,11 @@ const styles = {
   text: {
     color: "#cfc8ba",
     lineHeight: 1.8,
+  },
+  errorText: {
+    color: "#f0b3b3",
+    lineHeight: 1.7,
+    marginTop: "12px",
   },
   infoBox: {
     marginTop: "30px",
