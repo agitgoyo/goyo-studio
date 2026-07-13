@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
+import { ANONYMOUS, loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { formatClassOptionLabel, formatClassSnapshot } from "../lib/class-format";
 
 export default function ApplyPage() {
@@ -13,21 +13,14 @@ export default function ApplyPage() {
   const [isLoadingClasses, setIsLoadingClasses] = useState(true);
   const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
   const [isStartingPayment, setIsStartingPayment] = useState(false);
-  const [isPreparingPaymentWidget, setIsPreparingPaymentWidget] = useState(false);
-  const [paymentWidgetError, setPaymentWidgetError] = useState("");
   const latestCapacityRequestRef = useRef(0);
-  const widgetsRef = useRef(null);
-  const paymentMethodWidgetRef = useRef(null);
-  const agreementWidgetRef = useRef(null);
 
-  const selectedClass = classes.find((item) => item.id === selectedClassId) || null;
   const isFull = capacity?.isFull;
   const formBusy =
     isLoadingClasses ||
     isCheckingCapacity ||
     isSubmittingApplication ||
-    isStartingPayment ||
-    isPreparingPaymentWidget;
+    isStartingPayment;
 
   const fetchCapacity = async (classId) => {
     const requestId = Date.now() + Math.random();
@@ -73,7 +66,9 @@ export default function ApplyPage() {
   useEffect(() => {
     const loadClasses = async () => {
       try {
-        const response = await fetch("/api/classes", { cache: "no-store" });
+        const response = await fetch("/api/classes", {
+          cache: "no-store",
+        });
         const data = await response.json();
 
         if (!response.ok) {
@@ -93,106 +88,6 @@ export default function ApplyPage() {
     void loadClasses();
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const destroyWidgets = async () => {
-      widgetsRef.current = null;
-
-      const widgetsToDestroy = [
-        paymentMethodWidgetRef.current,
-        agreementWidgetRef.current,
-      ].filter(Boolean);
-
-      paymentMethodWidgetRef.current = null;
-      agreementWidgetRef.current = null;
-
-      if (!widgetsToDestroy.length) {
-        return;
-      }
-
-      await Promise.allSettled(widgetsToDestroy.map((widget) => widget.destroy()));
-    };
-
-    const setupPaymentWidget = async () => {
-      await destroyWidgets();
-
-      if (!selectedClass || isFull) {
-        setPaymentWidgetError("");
-        setIsPreparingPaymentWidget(false);
-        return;
-      }
-
-      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
-
-      if (!clientKey) {
-        setPaymentWidgetError("토스페이먼츠 Client Key가 설정되지 않았습니다.");
-        setIsPreparingPaymentWidget(false);
-        return;
-      }
-
-      try {
-        setIsPreparingPaymentWidget(true);
-        setPaymentWidgetError("");
-
-        const tossPayments = await loadTossPayments(clientKey);
-
-        if (cancelled) {
-          return;
-        }
-
-        const widgets = tossPayments.widgets({ customerKey: ANONYMOUS });
-
-        await widgets.setAmount({
-          currency: "KRW",
-          value: Number(selectedClass.price),
-        });
-
-        if (cancelled) {
-          return;
-        }
-
-        const paymentMethodWidget = await widgets.renderPaymentMethods({
-          selector: "#payment-method",
-        });
-        const agreementWidget = await widgets.renderAgreement({
-          selector: "#agreement",
-        });
-
-        if (cancelled) {
-          await Promise.allSettled([
-            paymentMethodWidget.destroy(),
-            agreementWidget.destroy(),
-          ]);
-          return;
-        }
-
-        widgetsRef.current = widgets;
-        paymentMethodWidgetRef.current = paymentMethodWidget;
-        agreementWidgetRef.current = agreementWidget;
-      } catch (error) {
-        console.error(error);
-
-        if (!cancelled) {
-          setPaymentWidgetError(
-            "결제 위젯을 불러오지 못했습니다. 잠시 후 다시 시도해주세요."
-          );
-        }
-      } finally {
-        if (!cancelled) {
-          setIsPreparingPaymentWidget(false);
-        }
-      }
-    };
-
-    void setupPaymentWidget();
-
-    return () => {
-      cancelled = true;
-      void destroyWidgets();
-    };
-  }, [selectedClass, isFull]);
-
   const handleClassChange = (event) => {
     const nextClassId = event.target.value;
 
@@ -202,7 +97,6 @@ export default function ApplyPage() {
     if (!nextClassId) {
       latestCapacityRequestRef.current += 1;
       setIsCheckingCapacity(false);
-      setPaymentWidgetError("");
       return;
     }
 
@@ -253,10 +147,15 @@ export default function ApplyPage() {
         return;
       }
 
-      if (!widgetsRef.current) {
-        alert("결제 위젯이 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.");
+      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
+
+      if (!clientKey) {
+        alert("토스페이먼츠 클라이언트 키가 설정되지 않았습니다.");
         return;
       }
+
+      const tossPayments = await loadTossPayments(clientKey);
+      const payment = tossPayments.payment({ customerKey: ANONYMOUS });
 
       const orderId = `goyo_${Date.now()}_${Math.random()
         .toString(36)
@@ -275,7 +174,12 @@ export default function ApplyPage() {
       });
       const siteUrl = window.location.origin;
 
-      await widgetsRef.current.requestPayment({
+      await payment.requestPayment({
+        method: "CARD",
+        amount: {
+          currency: "KRW",
+          value: Number(selected.price),
+        },
         orderId,
         orderName,
         customerName: String(name),
@@ -351,7 +255,6 @@ export default function ApplyPage() {
       formElement.reset();
       setSelectedClassId("");
       setCapacity(null);
-      setPaymentWidgetError("");
       latestCapacityRequestRef.current += 1;
       setIsCheckingCapacity(false);
     } catch (error) {
@@ -379,9 +282,9 @@ export default function ApplyPage() {
           D5의 처음부터 각 이미지에 맞는 표현법까지의 방법을 다루고 있습니다.
           <br />
           <br />
-          아래 정보를 작성해주시고 원하시는 강의를 선택해 주세요.
+          아래 정보를 작성해주시고 원하시는 강의를 선택 후
           <br />
-          카드 결제 완료 후 수강신청이 최종 확정됩니다.
+          결제를 완료해주시면 수강신청이 최종 확정됩니다.
           <br />
           <br />
           소수 정예로 진행되는 강의라 신중한 신청 부탁드립니다.
@@ -500,31 +403,11 @@ export default function ApplyPage() {
             <p>소수 정예 피드백</p>
           </div>
 
-          {selectedClassId && !isFull && (
-            <div className="payment-widget-section">
-              <p className="payment-widget-notice">
-                아래에서 결제수단을 선택한 뒤 결제를 진행해주세요.
-              </p>
-              <div id="payment-method" className="payment-widget-box" />
-              <div id="agreement" className="payment-agreement-box" />
-
-              {isPreparingPaymentWidget && (
-                <p className="payment-widget-helper">
-                  결제수단을 불러오는 중입니다...
-                </p>
-              )}
-
-              {paymentWidgetError && (
-                <p className="payment-widget-error">{paymentWidgetError}</p>
-              )}
-            </div>
-          )}
-
           <button
             type="button"
             className="submit-button payment-primary-button"
             onClick={handlePayment}
-            disabled={formBusy || !selectedClassId || isFull || !!paymentWidgetError}
+            disabled={formBusy || !selectedClassId || isFull}
           >
             {isFull
               ? "마감되었습니다"
