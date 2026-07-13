@@ -3,7 +3,18 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ANONYMOUS, loadTossPayments } from "@tosspayments/tosspayments-sdk";
-import { formatClassOptionLabel, formatClassSnapshot } from "../lib/class-format";
+import {
+  formatClassOptionLabel,
+  formatClassSnapshot,
+} from "../lib/class-format";
+
+function getSiteUrl() {
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return window.location.origin;
+  }
+
+  return process.env.NEXT_PUBLIC_SITE_URL || "";
+}
 
 export default function ApplyPage() {
   const [classes, setClasses] = useState([]);
@@ -40,9 +51,7 @@ export default function ApplyPage() {
 
       if (!response.ok) {
         setCapacity(null);
-        return {
-          error: data.message || "정원 확인 중 오류가 발생했습니다.",
-        };
+        return { error: data.message || "Failed to check seats." };
       }
 
       setCapacity(data);
@@ -53,9 +62,7 @@ export default function ApplyPage() {
       }
 
       console.error(error);
-      return {
-        error: "정원 확인 중 오류가 발생했습니다.",
-      };
+      return { error: "Failed to check seats." };
     } finally {
       if (latestCapacityRequestRef.current === requestId) {
         setIsCheckingCapacity(false);
@@ -72,14 +79,14 @@ export default function ApplyPage() {
         const data = await response.json();
 
         if (!response.ok) {
-          alert(data.message || "강의 목록을 불러오지 못했습니다.");
+          alert(data.message || "Could not load classes.");
           return;
         }
 
         setClasses(data);
       } catch (error) {
         console.error(error);
-        alert("강의 목록을 불러오는 중 오류가 발생했습니다.");
+        alert("An error occurred while loading classes.");
       } finally {
         setIsLoadingClasses(false);
       }
@@ -123,7 +130,7 @@ export default function ApplyPage() {
     const selected = classes.find((item) => item.id === classId);
 
     if (!name || !phone || !email || !classId || !selected) {
-      alert("필수 정보를 모두 입력해주세요.");
+      alert("Please fill in all required fields.");
       return;
     }
 
@@ -138,41 +145,44 @@ export default function ApplyPage() {
       }
 
       if (!capacityData) {
-        alert("정원 확인 중 오류가 발생했습니다.");
+        alert("Failed to check seats.");
         return;
       }
 
       if (capacityData.isFull) {
-        alert("해당 강의는 정원이 마감되었습니다.");
+        alert("This class is sold out.");
         return;
       }
 
       const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
 
       if (!clientKey) {
-        alert("토스페이먼츠 클라이언트 키가 설정되지 않았습니다.");
+        alert("NEXT_PUBLIC_TOSS_CLIENT_KEY is not set.");
         return;
       }
 
       const tossPayments = await loadTossPayments(clientKey);
       const payment = tossPayments.payment({ customerKey: ANONYMOUS });
-
       const orderId = `goyo_${Date.now()}_${Math.random()
         .toString(36)
         .slice(2, 8)}`;
       const classSnapshot = formatClassSnapshot(selected);
-      const orderName = `${classSnapshot} 수강권`;
-      const params = new URLSearchParams({
-        name: String(name),
-        phone: String(phone),
-        email: String(email),
-        classId: String(classId),
-        classType: classSnapshot,
-        job: String(job),
-        level: String(level),
-        message: String(message),
-      });
-      const siteUrl = window.location.origin;
+      const orderName = `${classSnapshot} ticket`;
+      const siteUrl = getSiteUrl();
+
+      sessionStorage.setItem(
+        `pending_payment_${orderId}`,
+        JSON.stringify({
+          name: String(name),
+          phone: String(phone),
+          email: String(email),
+          classId: String(classId),
+          classType: classSnapshot,
+          job: String(job),
+          level: String(level),
+          message: String(message),
+        })
+      );
 
       await payment.requestPayment({
         method: "CARD",
@@ -184,17 +194,18 @@ export default function ApplyPage() {
         orderName,
         customerName: String(name),
         customerEmail: String(email),
-        customerMobilePhone: String(phone).replaceAll("-", ""),
-        successUrl: `${siteUrl}/payment/success?${params.toString()}`,
+        customerMobilePhone: String(phone).replace(/\D/g, ""),
+        successUrl: `${siteUrl}/payment/success`,
         failUrl: `${siteUrl}/payment/fail`,
       });
     } catch (error) {
       console.error(error);
       const details = [error?.code, error?.message].filter(Boolean).join(" / ");
+
       alert(
         details
-          ? `결제창을 여는 중 문제가 발생했습니다.\n${details}`
-          : "결제창을 여는 중 문제가 발생했습니다. 다시 시도해주세요."
+          ? `Failed to open the payment window.\n${details}`
+          : "Failed to open the payment window. Please try again."
       );
     } finally {
       setIsStartingPayment(false);
@@ -206,7 +217,6 @@ export default function ApplyPage() {
 
     const formElement = event.currentTarget;
     const formData = new FormData(formElement);
-
     const name = formData.get("name");
     const phone = formData.get("phone");
     const email = formData.get("email");
@@ -217,7 +227,7 @@ export default function ApplyPage() {
     const selected = classes.find((item) => item.id === classId);
 
     if (!name || !phone || !email || !classId || !selected) {
-      alert("필수 정보를 모두 입력해주세요.");
+      alert("Please fill in all required fields.");
       return;
     }
 
@@ -245,7 +255,7 @@ export default function ApplyPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.message || "신청 접수에 실패했습니다.");
+        alert(data.message || "Failed to submit the application.");
 
         if (response.status === 409 && selectedClassId) {
           await fetchCapacity(selectedClassId);
@@ -255,7 +265,7 @@ export default function ApplyPage() {
       }
 
       alert(
-        "수강신청이 정상적으로 접수되었습니다. 메일로 결제 및 수강안내를 보내드렸으니 확인 부탁드립니다. ^^"
+        "Your application has been submitted. We will send payment and class details by email."
       );
       formElement.reset();
       setSelectedClassId("");
@@ -264,7 +274,7 @@ export default function ApplyPage() {
       setIsCheckingCapacity(false);
     } catch (error) {
       console.error(error);
-      alert("신청 접수 중 문제가 발생했습니다. 다시 시도해주세요.");
+      alert("There was a problem submitting your application.");
     } finally {
       setIsSubmittingApplication(false);
     }
@@ -273,39 +283,29 @@ export default function ApplyPage() {
   return (
     <main className="apply-page">
       <section className="apply-card">
-        <span className="apply-label">D5 렌더링 강의</span>
-        <h1>강의 신청</h1>
+        <span className="apply-label">D5 One-day Class</span>
+        <h1>Apply for Class</h1>
 
         <p className="apply-description">
-          안녕하세요. 고요입니다.
+          Hello, this is Goyo.
           <br />
           <br />
-          강의는 원데이 클래스로 하루 3시간 동안 진행됩니다.
+          This is a one-day class that runs for 3 hours.
           <br />
-          처음 사용하시는 분들도 따라오실 수 있도록
+          It is designed so beginners can follow along,
           <br />
-          D5의 처음부터 각 이미지에 맞는 표현법까지의 방법을 다루고 있습니다.
-          <br />
-          <br />
-          아래 정보를 작성해주시고 원하시는 강의를 선택 후
-          <br />
-          결제를 완료해주시면 수강신청이 최종 확정됩니다.
-          <br />
-          <br />
-          소수 정예로 진행되는 강의라 신중한 신청 부탁드립니다.
-          <br />
-          감사합니다 :D
+          covering D5 basics through image-specific expression methods.
         </p>
 
         <form className="apply-form" onSubmit={handleSubmitApplication}>
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="name">이름 *</label>
+              <label htmlFor="name">Name *</label>
               <input type="text" id="name" name="name" required />
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone">연락처 *</label>
+              <label htmlFor="phone">Phone *</label>
               <input
                 type="text"
                 id="phone"
@@ -317,13 +317,13 @@ export default function ApplyPage() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">이메일 *</label>
+            <label htmlFor="email">Email *</label>
             <input type="email" id="email" name="email" required />
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="classId">신청 강의 *</label>
+              <label htmlFor="classId">Class *</label>
               <select
                 id="classId"
                 name="classId"
@@ -332,9 +332,7 @@ export default function ApplyPage() {
                 onChange={handleClassChange}
               >
                 <option value="">
-                  {isLoadingClasses
-                    ? "강의 목록을 불러오는 중..."
-                    : "강의를 선택해주세요"}
+                  {isLoadingClasses ? "Loading classes..." : "Select a class"}
                 </option>
 
                 {classes.map((item) => (
@@ -346,66 +344,64 @@ export default function ApplyPage() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="job">현재 상태</label>
+              <label htmlFor="job">Current Status</label>
               <select id="job" name="job">
-                <option value="">선택해주세요</option>
-                <option value="학생">학생</option>
-                <option value="취준생">취준생</option>
-                <option value="실무자">실무자</option>
-                <option value="프리랜서">프리랜서</option>
-                <option value="기타">기타</option>
+                <option value="">Select</option>
+                <option value="student">Student</option>
+                <option value="job-seeker">Job Seeker</option>
+                <option value="working">Working</option>
+                <option value="freelancer">Freelancer</option>
+                <option value="other">Other</option>
               </select>
             </div>
           </div>
 
-          {selectedClassId && (
+          {selectedClassId ? (
             <div className={`capacity-box ${isFull ? "full" : ""}`}>
-              {isCheckingCapacity && <p>정원을 확인하고 있습니다...</p>}
+              {isCheckingCapacity ? <p>Checking seats...</p> : null}
 
-              {!isCheckingCapacity && capacity && !capacity.isFull && (
+              {!isCheckingCapacity && capacity && !capacity.isFull ? (
                 <>
                   <strong>
-                    현재 {capacity.paidCount} / {capacity.capacity}명 신청 완료
+                    {capacity.paidCount} / {capacity.capacity} seats booked
                   </strong>
-                  <p>남은 자리 {capacity.remaining}명</p>
+                  <p>{capacity.remaining} seats left</p>
                 </>
-              )}
+              ) : null}
 
-              {!isCheckingCapacity && capacity?.isFull && (
+              {!isCheckingCapacity && capacity?.isFull ? (
                 <>
-                  <strong>마감되었습니다.</strong>
-                  <p>
-                    해당 강의는 정원 {capacity.capacity}명이 모두 신청 완료되었습니다.
-                  </p>
+                  <strong>Sold out</strong>
+                  <p>This class has reached its capacity.</p>
                 </>
-              )}
+              ) : null}
             </div>
-          )}
+          ) : null}
 
           <div className="form-group">
-            <label htmlFor="level">프로그램 사용 경험</label>
+            <label htmlFor="level">Experience Level</label>
             <select id="level" name="level">
-              <option value="">선택해주세요</option>
-              <option value="처음 사용">처음 사용</option>
-              <option value="기초 사용 가능">기초 사용 가능</option>
-              <option value="어느 정도 사용 가능">어느 정도 사용 가능</option>
-              <option value="실무에서 사용 중">실무에서 사용 중</option>
+              <option value="">Select</option>
+              <option value="beginner">First time</option>
+              <option value="basic">Basic usage</option>
+              <option value="intermediate">Some experience</option>
+              <option value="advanced">Using for work</option>
             </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="message">궁금한 점 / 배우고 싶은 내용</label>
+            <label htmlFor="message">Questions / What you want to learn</label>
             <textarea
               id="message"
               name="message"
-              placeholder="강의를 통해 배우고 싶은 내용이나 현재 어려운 점을 적어주세요."
+              placeholder="Tell us what you want to learn or what feels difficult right now."
             />
           </div>
 
           <div className="apply-final">
-            <p>총 3시간 원데이 집중 강의</p>
-            <p>실무에 바로 적용 가능</p>
-            <p>소수 정예 피드백</p>
+            <p>3-hour focused one-day class</p>
+            <p>Practical and work-ready</p>
+            <p>Small-group feedback</p>
           </div>
 
           <button
@@ -415,14 +411,14 @@ export default function ApplyPage() {
             disabled={formBusy || !selectedClassId || isFull}
           >
             {isFull
-              ? "마감되었습니다"
+              ? "Sold out"
               : isStartingPayment
-                ? "결제를 준비하고 있습니다..."
-                : "강의 결제하기"}
+                ? "Preparing payment..."
+                : "Pay for Class"}
           </button>
 
           <p className="payment-review-notice">
-            카드 결제가 완료되면 신청이 최종 확정됩니다.
+            Your booking is confirmed after card payment is completed.
           </p>
 
           <button
@@ -431,24 +427,26 @@ export default function ApplyPage() {
             disabled={formBusy || !selectedClassId || isFull}
           >
             {isFull
-              ? "마감되었습니다"
+              ? "Sold out"
               : isSubmittingApplication
-                ? "신청 접수 중입니다..."
-                : "수강 신청만 보내기"}
+                ? "Submitting..."
+                : "Submit Application Only"}
           </button>
 
           <p className="apply-notice">
-            수강 신청만 먼저 보내고 싶은 경우 위 버튼으로 접수해주시면 안내 메일을 보내드립니다.
+            If you want to send the application first without payment, use the
+            button above and we will email you the next steps.
           </p>
 
           <div className="refund-policy-box">
             <p className="refund-policy-summary">
-              결제 전에 환불 기준을 꼭 확인해 주세요.
+              Please check the refund policy before payment.
               <br />
-              수업 7일 전까지는 전액 환불, 3일 전까지는 50% 환불, 그 이후에는 환불이 어렵습니다.
+              Full refund up to 7 days before class, 50% refund up to 3 days
+              before class, and no refund after that.
             </p>
             <Link href="/refund-policy" className="refund-policy-link">
-              환불정책 보기
+              View refund policy
             </Link>
           </div>
         </form>

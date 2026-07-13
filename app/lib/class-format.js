@@ -15,7 +15,7 @@ export function formatClassSnapshot(item) {
   }
 
   if (timeText) {
-    parts.push(`· ${timeText}`);
+    parts.push(`| ${timeText}`);
   }
 
   return parts.join(" ").replace(/\s+/g, " ").trim();
@@ -26,7 +26,9 @@ export function formatClassOptionLabel(item) {
 
   const snapshot = formatClassSnapshot(item);
   const price = Number(item.price);
-  const priceLabel = Number.isFinite(price) ? `${price.toLocaleString()}원` : "";
+  const priceLabel = Number.isFinite(price)
+    ? `${price.toLocaleString()} KRW`
+    : "";
 
   return [snapshot, priceLabel].filter(Boolean).join(" - ");
 }
@@ -34,11 +36,11 @@ export function formatClassOptionLabel(item) {
 export function formatClassMeta(item) {
   if (!item) return [];
 
+  const price = Number(item.price);
+
   return [
     String(item.date || "").trim(),
     String(item.time_text || "").trim(),
-    Number.isFinite(Number(item.price))
-      ? `${Number(item.price).toLocaleString()}원`
-      : "",
+    Number.isFinite(price) ? `${price.toLocaleString()} KRW` : "",
   ].filter(Boolean);
 }

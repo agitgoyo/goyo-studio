@@ -23,10 +23,14 @@ function PaymentSuccessContent() {
       const paymentKey = searchParams.get("paymentKey");
       const orderId = searchParams.get("orderId");
       const amount = searchParams.get("amount");
+      const storedPayload = orderId
+        ? sessionStorage.getItem(`pending_payment_${orderId}`)
+        : null;
+      const checkoutPayload = storedPayload ? JSON.parse(storedPayload) : null;
 
       if (!paymentKey || !orderId || !amount) {
         setStatus("error");
-        setErrorMessage("결제 정보가 올바르지 않습니다.");
+        setErrorMessage("Invalid payment information.");
         return;
       }
 
@@ -37,12 +41,18 @@ function PaymentSuccessContent() {
         setPaymentData({
           orderId,
           totalAmount: Number(amount),
-          method: "확인 완료",
+          method: "Already confirmed",
         });
         return;
       }
 
       try {
+        if (!checkoutPayload?.classId) {
+          throw new Error(
+            "Application data is missing. Please try the payment again."
+          );
+        }
+
         const response = await fetch("/api/payments/confirm", {
           method: "POST",
           headers: {
@@ -52,29 +62,32 @@ function PaymentSuccessContent() {
             paymentKey,
             orderId,
             amount: Number(amount),
-            name: searchParams.get("name") || "",
-            phone: searchParams.get("phone") || "",
-            email: searchParams.get("email") || "",
-            classId: searchParams.get("classId") || "",
-            classType: searchParams.get("classType") || "",
-            job: searchParams.get("job") || "",
-            level: searchParams.get("level") || "",
-            message: searchParams.get("message") || "",
+            name: checkoutPayload.name || "",
+            phone: checkoutPayload.phone || "",
+            email: checkoutPayload.email || "",
+            classId: checkoutPayload.classId || "",
+            classType: checkoutPayload.classType || "",
+            job: checkoutPayload.job || "",
+            level: checkoutPayload.level || "",
+            message: checkoutPayload.message || "",
           }),
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || "결제 승인에 실패했습니다.");
+          throw new Error(data.message || "Payment confirmation failed.");
         }
 
         sessionStorage.setItem(`confirmed_${orderId}`, "true");
+        sessionStorage.removeItem(`pending_payment_${orderId}`);
         setPaymentData(data);
         setStatus("success");
       } catch (error) {
         console.error(error);
-        setErrorMessage(error?.message || "결제 승인 중 오류가 발생했습니다.");
+        setErrorMessage(
+          error?.message || "An error occurred while confirming payment."
+        );
         setStatus("error");
       }
     };
@@ -85,51 +98,52 @@ function PaymentSuccessContent() {
   return (
     <main style={styles.page}>
       <section style={styles.card}>
-        {status === "confirming" && (
+        {status === "confirming" ? (
           <>
             <p style={styles.label}>PAYMENT</p>
-            <h1 style={styles.title}>결제 승인 중입니다.</h1>
-            <p style={styles.text}>잠시만 기다려주세요.</p>
+            <h1 style={styles.title}>Confirming payment</h1>
+            <p style={styles.text}>Please wait a moment.</p>
           </>
-        )}
+        ) : null}
 
-        {status === "success" && (
+        {status === "success" ? (
           <>
             <p style={styles.label}>PAYMENT COMPLETE</p>
-            <h1 style={styles.title}>강의 결제가 완료되었습니다.</h1>
+            <h1 style={styles.title}>Payment completed</h1>
             <p style={styles.text}>
-              수강 신청이 정상적으로 접수되었습니다.
+              Your class application has been received successfully.
               <br />
-              신청 정보가 고요스튜디오 메일로 전송되었습니다.
+              A confirmation has been sent to Goyo Studio.
             </p>
 
-            {paymentData && (
+            {paymentData ? (
               <div style={styles.infoBox}>
-                <p>주문번호: {paymentData.orderId}</p>
-                <p>결제금액: {paymentData.totalAmount?.toLocaleString()}원</p>
-                <p>결제수단: {paymentData.method}</p>
+                <p>Order ID: {paymentData.orderId}</p>
+                <p>Amount: {paymentData.totalAmount?.toLocaleString()} KRW</p>
+                <p>Method: {paymentData.method}</p>
               </div>
-            )}
+            ) : null}
 
             <Link href="/" style={styles.button}>
-              메인으로 돌아가기
+              Back to home
             </Link>
           </>
-        )}
+        ) : null}
 
-        {status === "error" && (
+        {status === "error" ? (
           <>
             <p style={styles.label}>PAYMENT ERROR</p>
-            <h1 style={styles.title}>결제 승인에 실패했습니다.</h1>
+            <h1 style={styles.title}>Payment confirmation failed</h1>
             <p style={styles.text}>
-              결제는 되었는데 이 화면이 보인다면, 고요스튜디오에 문의해주세요.
+              If payment was completed but this screen is shown, please contact
+              Goyo Studio.
             </p>
             {errorMessage ? <p style={styles.errorText}>{errorMessage}</p> : null}
             <Link href="/apply" style={styles.button}>
-              다시 시도하기
+              Try again
             </Link>
           </>
-        )}
+        ) : null}
       </section>
     </main>
   );
@@ -140,7 +154,7 @@ function PaymentLoading() {
     <main style={styles.page}>
       <section style={styles.card}>
         <p style={styles.label}>PAYMENT</p>
-        <h1 style={styles.title}>결제 정보를 확인 중입니다.</h1>
+        <h1 style={styles.title}>Checking payment information</h1>
       </section>
     </main>
   );
