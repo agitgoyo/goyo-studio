@@ -190,7 +190,12 @@ export default function ApplyPage() {
       });
     } catch (error) {
       console.error(error);
-      alert("결제창을 여는 중 문제가 발생했습니다. 다시 시도해주세요.");
+      const details = [error?.code, error?.message].filter(Boolean).join(" / ");
+      alert(
+        details
+          ? `결제창을 여는 중 문제가 발생했습니다.\n${details}`
+          : "결제창을 여는 중 문제가 발생했습니다. 다시 시도해주세요."
+      );
     } finally {
       setIsStartingPayment(false);
     }
