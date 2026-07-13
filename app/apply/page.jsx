@@ -22,7 +22,6 @@ export default function ApplyPage() {
   const [capacity, setCapacity] = useState(null);
   const [isCheckingCapacity, setIsCheckingCapacity] = useState(false);
   const [isLoadingClasses, setIsLoadingClasses] = useState(true);
-  const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
   const [isStartingPayment, setIsStartingPayment] = useState(false);
   const [isLoadingWidget, setIsLoadingWidget] = useState(false);
   const [widgetError, setWidgetError] = useState("");
@@ -38,7 +37,6 @@ export default function ApplyPage() {
   const formBusy =
     isLoadingClasses ||
     isCheckingCapacity ||
-    isSubmittingApplication ||
     isStartingPayment ||
     isLoadingWidget;
 
@@ -171,7 +169,8 @@ export default function ApplyPage() {
       } catch (error) {
         console.error(error);
         setWidgetError(
-          error?.message || "결제 위젯을 불러오지 못했습니다. 잠시 후 다시 시도해주세요."
+          error?.message ||
+            "결제 위젯을 불러오지 못했습니다. 잠시 후 다시 시도해주세요."
         );
       } finally {
         setIsLoadingWidget(false);
@@ -293,75 +292,6 @@ export default function ApplyPage() {
     }
   };
 
-  const handleSubmitApplication = async (event) => {
-    event.preventDefault();
-
-    const formElement = event.currentTarget;
-    const formData = new FormData(formElement);
-    const name = formData.get("name");
-    const phone = formData.get("phone");
-    const email = formData.get("email");
-    const classId = formData.get("classId");
-    const job = formData.get("job") || "";
-    const level = formData.get("level") || "";
-    const message = formData.get("message") || "";
-    const selected = classes.find((item) => item.id === classId);
-
-    if (!name || !phone || !email || !classId || !selected) {
-      alert("필수 정보를 모두 입력해주세요.");
-      return;
-    }
-
-    try {
-      setIsSubmittingApplication(true);
-
-      const response = await fetch("/api/applications/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          phone,
-          email,
-          classId,
-          classType: formatClassSnapshot(selected),
-          job,
-          level,
-          message,
-          amount: selected.price,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.message || "신청 접수에 실패했습니다.");
-
-        if (response.status === 409 && selectedClassId) {
-          await fetchCapacity(selectedClassId);
-        }
-
-        return;
-      }
-
-      alert(
-        "수강 신청이 정상적으로 접수되었습니다. 메일로 결제 및 수강 안내를 보내드릴 예정이니 확인 부탁드립니다."
-      );
-      formElement.reset();
-      setSelectedClassId("");
-      setCapacity(null);
-      setWidgetError("");
-      latestCapacityRequestRef.current += 1;
-      setIsCheckingCapacity(false);
-    } catch (error) {
-      console.error(error);
-      alert("신청 접수 중 문제가 발생했습니다. 다시 시도해주세요.");
-    } finally {
-      setIsSubmittingApplication(false);
-    }
-  };
-
   return (
     <main className="apply-page">
       <section className="apply-card">
@@ -379,7 +309,7 @@ export default function ApplyPage() {
           D5의 기초부터 각 이미지에 맞는 표현법까지 다루고 있습니다.
         </p>
 
-        <form className="apply-form" onSubmit={handleSubmitApplication}>
+        <form className="apply-form">
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="name">이름 *</label>
@@ -528,27 +458,12 @@ export default function ApplyPage() {
             카드 결제가 완료되면 신청이 최종 확정됩니다.
           </p>
 
-          <button
-            type="submit"
-            className="submit-button bank-button"
-            disabled={formBusy || !selectedClassId || isFull}
-          >
-            {isFull
-              ? "마감되었습니다"
-              : isSubmittingApplication
-                ? "신청 접수 중입니다..."
-                : "수강 신청만 보내기"}
-          </button>
-
-          <p className="apply-notice">
-            수강 신청만 먼저 보내고 싶은 경우 위 버튼으로 접수해주시면 안내 메일을 보내드립니다.
-          </p>
-
           <div className="refund-policy-box">
             <p className="refund-policy-summary">
               결제 전에 환불 기준을 꼭 확인해 주세요.
               <br />
-              수업 7일 전까지는 전액 환불, 3일 전까지는 50% 환불, 그 이후에는 환불이 어렵습니다.
+              수업 7일 전까지는 전액 환불, 3일 전까지는 50% 환불, 그
+              이후에는 환불이 어렵습니다.
             </p>
             <Link href="/refund-policy" className="refund-policy-link">
               환불정책 보기
