@@ -272,7 +272,8 @@ export async function POST(request) {
           approvedAt: paymentData.approvedAt || "",
           autoReplyEnabled: "true",
           autoReplyTo: normalizedEmail,
-          autoReplySubject: "[GOYO STUDIO] 수강신청이 접수되었습니다.",
+          autoReplySubject:
+            "[GOYO STUDIO] 강의 신청 및 결제가 완료되었습니다.",
           autoReplyName: name || "",
           autoReplyFormType: "강의 신청",
           autoReplyClassType: finalClassType,

@@ -2,19 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ANONYMOUS, loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import {
   formatClassOptionLabel,
   formatClassSnapshot,
 } from "../lib/class-format";
-
-function getSiteUrl() {
-  if (typeof window !== "undefined" && window.location?.origin) {
-    return window.location.origin;
-  }
-
-  return process.env.NEXT_PUBLIC_SITE_URL || "";
-}
 
 export default function ApplyPage() {
   const [classes, setClasses] = useState([]);
@@ -22,23 +13,14 @@ export default function ApplyPage() {
   const [capacity, setCapacity] = useState(null);
   const [isCheckingCapacity, setIsCheckingCapacity] = useState(false);
   const [isLoadingClasses, setIsLoadingClasses] = useState(true);
-  const [isStartingPayment, setIsStartingPayment] = useState(false);
-  const [isLoadingWidget, setIsLoadingWidget] = useState(false);
-  const [widgetError, setWidgetError] = useState("");
+  const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
   const latestCapacityRequestRef = useRef(0);
-  const widgetsRef = useRef(null);
-  const paymentWidgetRef = useRef(null);
-  const agreementWidgetRef = useRef(null);
-  const renderedClassIdRef = useRef("");
 
-  const selectedClass =
-    classes.find((item) => item.id === selectedClassId) || null;
   const isFull = capacity?.isFull;
   const formBusy =
     isLoadingClasses ||
     isCheckingCapacity ||
-    isStartingPayment ||
-    isLoadingWidget;
+    isSubmittingApplication;
 
   const fetchCapacity = async (classId) => {
     const requestId = Date.now() + Math.random();
@@ -106,86 +88,11 @@ export default function ApplyPage() {
     void loadClasses();
   }, []);
 
-  useEffect(() => {
-    const setupWidgets = async () => {
-      if (!selectedClass) {
-        setWidgetError("");
-        renderedClassIdRef.current = "";
-        return;
-      }
-
-      const widgetClientKey = process.env.NEXT_PUBLIC_TOSS_WIDGET_CLIENT_KEY;
-
-      if (!widgetClientKey) {
-        setWidgetError(
-          "토스 결제위젯 키가 설정되지 않았습니다. NEXT_PUBLIC_TOSS_WIDGET_CLIENT_KEY를 추가해주세요."
-        );
-        return;
-      }
-
-      try {
-        setIsLoadingWidget(true);
-        setWidgetError("");
-
-        if (!widgetsRef.current) {
-          const tossPayments = await loadTossPayments(widgetClientKey);
-          widgetsRef.current = tossPayments.widgets({ customerKey: ANONYMOUS });
-        }
-
-        await widgetsRef.current.setAmount({
-          currency: "KRW",
-          value: Number(selectedClass.price),
-        });
-
-        if (renderedClassIdRef.current !== selectedClass.id) {
-          if (paymentWidgetRef.current?.destroy) {
-            await paymentWidgetRef.current.destroy();
-            paymentWidgetRef.current = null;
-          }
-
-          if (agreementWidgetRef.current?.destroy) {
-            await agreementWidgetRef.current.destroy();
-            agreementWidgetRef.current = null;
-          }
-
-          const paymentVariantKey =
-            process.env.NEXT_PUBLIC_TOSS_WIDGET_VARIANT_KEY || undefined;
-          const agreementVariantKey =
-            process.env.NEXT_PUBLIC_TOSS_AGREEMENT_VARIANT_KEY || undefined;
-
-          paymentWidgetRef.current =
-            await widgetsRef.current.renderPaymentMethods({
-              selector: "#toss-payment-methods",
-              variantKey: paymentVariantKey,
-            });
-
-          agreementWidgetRef.current = await widgetsRef.current.renderAgreement({
-            selector: "#toss-agreement",
-            variantKey: agreementVariantKey,
-          });
-
-          renderedClassIdRef.current = selectedClass.id;
-        }
-      } catch (error) {
-        console.error(error);
-        setWidgetError(
-          error?.message ||
-            "결제 위젯을 불러오지 못했습니다. 잠시 후 다시 시도해주세요."
-        );
-      } finally {
-        setIsLoadingWidget(false);
-      }
-    };
-
-    void setupWidgets();
-  }, [selectedClass]);
-
   const handleClassChange = (event) => {
     const nextClassId = event.target.value;
 
     setSelectedClassId(nextClassId);
     setCapacity(null);
-    setWidgetError("");
 
     if (!nextClassId) {
       latestCapacityRequestRef.current += 1;
@@ -196,15 +103,10 @@ export default function ApplyPage() {
     void fetchCapacity(nextClassId);
   };
 
-  const handlePayment = async (event) => {
+  const handleSubmitApplication = async (event) => {
     event.preventDefault();
 
-    const formElement = event.currentTarget.closest("form");
-
-    if (!formElement) {
-      return;
-    }
-
+    const formElement = event.currentTarget;
     const formData = new FormData(formElement);
     const name = formData.get("name");
     const phone = formData.get("phone");
@@ -220,16 +122,8 @@ export default function ApplyPage() {
       return;
     }
 
-    if (!widgetsRef.current) {
-      alert(
-        widgetError ||
-          "결제 위젯이 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요."
-      );
-      return;
-    }
-
     try {
-      setIsStartingPayment(true);
+      setIsSubmittingApplication(true);
 
       const capacityData = await fetchCapacity(classId);
 
@@ -248,47 +142,45 @@ export default function ApplyPage() {
         return;
       }
 
-      const orderId = `goyo_${Date.now()}_${Math.random()
-        .toString(36)
-        .slice(2, 8)}`;
-      const classSnapshot = formatClassSnapshot(selected);
-      const orderName = `${classSnapshot} 수강권`;
-      const siteUrl = getSiteUrl();
-
-      sessionStorage.setItem(
-        `pending_payment_${orderId}`,
-        JSON.stringify({
-          name: String(name),
-          phone: String(phone),
-          email: String(email),
-          classId: String(classId),
-          classType: classSnapshot,
-          job: String(job),
-          level: String(level),
-          message: String(message),
-        })
-      );
-
-      await widgetsRef.current.requestPayment({
-        orderId,
-        orderName,
-        successUrl: `${siteUrl}/payment/success`,
-        failUrl: `${siteUrl}/payment/fail`,
-        customerEmail: String(email),
-        customerName: String(name),
-        customerMobilePhone: String(phone).replace(/\D/g, ""),
+      const response = await fetch("/api/applications/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          phone,
+          email,
+          classId,
+          classType: formatClassSnapshot(selected),
+          job,
+          level,
+          message,
+          amount: selected.price,
+        }),
       });
-    } catch (error) {
-      console.error(error);
-      const details = [error?.code, error?.message].filter(Boolean).join(" / ");
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "신청 접수에 실패했습니다.");
+        if (response.status === 409 && selectedClassId) {
+          await fetchCapacity(selectedClassId);
+        }
+        return;
+      }
 
       alert(
-        details
-          ? `결제창을 여는 중 문제가 발생했습니다.\n${details}`
-          : "결제창을 여는 중 문제가 발생했습니다. 다시 시도해주세요."
+        "수강 신청이 정상적으로 접수되었습니다. 계좌번호와 결제 안내를 메일로 보내드릴 예정이니 확인 부탁드립니다."
       );
+      formElement.reset();
+      setSelectedClassId("");
+      setCapacity(null);
+      latestCapacityRequestRef.current += 1;
+      setIsCheckingCapacity(false);
+    } catch (error) {
+      console.error(error);
+      alert("신청 접수 중 문제가 발생했습니다. 다시 시도해주세요.");
     } finally {
-      setIsStartingPayment(false);
+      setIsSubmittingApplication(false);
     }
   };
 
@@ -309,7 +201,7 @@ export default function ApplyPage() {
           D5의 기초부터 각 이미지에 맞는 표현법까지 다루고 있습니다.
         </p>
 
-        <form className="apply-form">
+        <form className="apply-form" onSubmit={handleSubmitApplication}>
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="name">이름 *</label>
@@ -418,45 +310,36 @@ export default function ApplyPage() {
             <p>소수 정예 피드백</p>
           </div>
 
-          {selectedClass ? (
-            <div className="widget-section">
-              <p className="payment-review-notice">
-                아래에서 결제수단을 선택한 뒤 결제를 진행해주세요.
-              </p>
-              <div id="toss-payment-methods" className="toss-widget-box" />
-              <div
-                id="toss-agreement"
-                className="toss-widget-box toss-agreement-box"
-              />
-            </div>
-          ) : null}
-
-          {widgetError ? (
-            <p className="payment-review-notice" style={{ color: "#c45e42" }}>
-              {widgetError}
-            </p>
-          ) : null}
-
           <button
-            type="button"
-            className="submit-button payment-primary-button"
-            onClick={handlePayment}
-            disabled={
-              formBusy || !selectedClassId || isFull || Boolean(widgetError)
-            }
+            type="submit"
+            className="submit-button bank-button"
+            disabled={formBusy || !selectedClassId || isFull}
           >
             {isFull
               ? "마감되었습니다"
-              : isLoadingWidget
-                ? "결제 위젯을 불러오고 있습니다..."
-                : isStartingPayment
-                  ? "결제를 준비하고 있습니다..."
-                  : "강의 결제하기"}
+              : isSubmittingApplication
+                ? "수강 신청 접수 중입니다..."
+                : "수강신청 보내기"}
           </button>
 
           <p className="payment-review-notice">
-            카드 결제가 완료되면 신청이 최종 확정됩니다.
+            수강 신청 접수 후 계좌번호와 입금 안내를 메일로 보내드립니다.
           </p>
+
+          <div className="payment-review-panel" aria-disabled="true">
+            <p className="payment-review-notice">
+              <strong>온라인 결제 시스템 심사 중</strong>
+              <br />
+              심사 완료 후 카드 결제를 다시 이용하실 수 있습니다.
+            </p>
+            <button
+              type="button"
+              className="submit-button payment-review-button"
+              disabled
+            >
+              카드로 결제하기 (심사 중)
+            </button>
+          </div>
 
           <div className="refund-policy-box">
             <p className="refund-policy-summary">

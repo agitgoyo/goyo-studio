@@ -31,7 +31,7 @@ function doPost(e) {
     body: adminBody,
   });
 
-  const shouldAutoReply =
+  const shouldSendBankTransferReply =
     data.autoReplyEnabled === "true" &&
     formType === "강의 신청" &&
     data.paymentStatus === "계좌이체 신청";
@@ -47,7 +47,7 @@ function doPost(e) {
   const replySubject =
     data.autoReplySubject || "[GOYO STUDIO] 수강신청이 접수되었습니다.";
 
-  if (shouldAutoReply && replyTo) {
+  if (shouldSendBankTransferReply && replyTo) {
     const replyBody = [
       "안녕하세요 " + customerName + " 님.",
       "고요스튜디오 한인용입니다.",
@@ -74,6 +74,43 @@ function doPost(e) {
       to: replyTo,
       subject: replySubject,
       body: replyBody,
+    });
+  }
+
+  const shouldSendPaymentCompleteReply =
+    data.autoReplyEnabled === "true" &&
+    formType === "강의 신청" &&
+    data.paymentStatus === "결제 완료";
+
+  if (shouldSendPaymentCompleteReply && replyTo) {
+    const paymentAmount = rawAmount
+      ? Number(rawAmount).toLocaleString("ko-KR") + "원"
+      : "-";
+    const paymentMethod = data.method || "-";
+    const paymentOrderId = data.orderId || "-";
+    const paymentReplySubject =
+      data.autoReplySubject || "[GOYO STUDIO] 강의 신청 및 결제가 완료되었습니다.";
+    const paymentReplyBody = [
+      "안녕하세요, " + customerName + "님.",
+      "고요스튜디오입니다.",
+      "",
+      className + " 강의 신청과 결제가 정상적으로 완료되었습니다.",
+      "",
+      "[결제 내역]",
+      "결제금액: " + paymentAmount,
+      "결제수단: " + paymentMethod,
+      "주문번호: " + paymentOrderId,
+      "",
+      "수업 일정 및 준비사항은 신청자에게 별도로 안내드리겠습니다.",
+      "감사합니다.",
+      "",
+      "고요스튜디오",
+    ].join("\n");
+
+    MailApp.sendEmail({
+      to: replyTo,
+      subject: paymentReplySubject,
+      body: paymentReplyBody,
     });
   }
 
