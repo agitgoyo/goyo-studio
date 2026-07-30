@@ -464,7 +464,7 @@ export default function ApplyPage() {
           </button>
 
           <p className="payment-review-notice">
-            수강 신청 접수 후 계좌번호와 입금 안내를 메일로 보내드립니다.
+            
           </p>
 
           <div className="payment-review-panel">
