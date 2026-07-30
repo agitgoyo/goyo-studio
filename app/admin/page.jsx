@@ -3,11 +3,14 @@
 import { useState } from "react";
 import AdminClassManager from "./AdminClassManager";
 import AdminReviewManager from "./AdminReviewManager";
+import AdminApplicationManager from "./AdminApplicationManager";
 
 const tabs = [
   { key: "classes", label: "수업 관리" },
   { key: "reviews", label: "후기 정리" },
 ];
+
+tabs.push({ key: "applications", label: "신청·환불 관리" });
 
 export default function AdminPage() {
   const [password, setPassword] = useState("");
@@ -116,11 +119,9 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {activeTab === "classes" ? (
-          <AdminClassManager password={password} isActive />
-        ) : (
-          <AdminReviewManager password={password} isActive />
-        )}
+        {activeTab === "classes" ? <AdminClassManager password={password} isActive /> : null}
+        {activeTab === "reviews" ? <AdminReviewManager password={password} isActive /> : null}
+        {activeTab === "applications" ? <AdminApplicationManager password={password} isActive /> : null}
       </section>
     </main>
   );
