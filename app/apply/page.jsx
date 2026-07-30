@@ -238,7 +238,11 @@ export default function ApplyPage() {
       });
     } catch (error) {
       console.error(error);
-      alert("결제창을 여는 중 문제가 발생했습니다. 다시 시도해주세요.");
+      alert(
+        error?.message
+          ? `결제창을 열지 못했습니다: ${error.message}`
+          : "결제창을 여는 중 문제가 발생했습니다. 다시 시도해주세요."
+      );
     } finally {
       setIsStartingPayment(false);
     }
