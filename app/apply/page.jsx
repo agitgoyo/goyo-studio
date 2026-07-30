@@ -342,7 +342,7 @@ export default function ApplyPage() {
           D5의 기초부터 각 이미지에 맞는 표현법까지 다루고 있습니다.
         </p>
 
-        <form className="apply-form" onSubmit={handleSubmitApplication}>
+        <form className="apply-form" onSubmit={handlePayment}>
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="name">이름 *</label>
@@ -483,9 +483,8 @@ export default function ApplyPage() {
               </div>
             ) : null}
             <button
-              type="button"
-              className="submit-button payment-review-button"
-              onClick={handlePayment}
+              type="submit"
+              className="submit-button payment-primary-button"
               disabled={
                 formBusy || !selectedClassId || isFull || Boolean(widgetError)
               }
