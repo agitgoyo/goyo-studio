@@ -114,7 +114,9 @@ function mergeTimeTextFromOverrides(classes, overrides) {
 
 function stripTimeText(item) {
   return Object.fromEntries(
-    Object.entries(item).filter(([key]) => key !== "time_text")
+    Object.entries(item).filter(
+      ([key]) => key !== "time_text" && key !== "bundle_class_ids" && key !== "capacity_details" && key !== "occupied" && key !== "remaining"
+    )
   );
 }
 
