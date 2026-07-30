@@ -129,7 +129,7 @@ export async function POST(request) {
       .eq("order_id", orderId)
       .maybeSingle();
 
-    if (existingApplication) {
+    if (existingApplication?.payment_status === "paid") {
       return NextResponse.json({
         orderId,
         totalAmount: amount,
@@ -137,7 +137,7 @@ export async function POST(request) {
       });
     }
 
-    const duplicateApplication = await findDuplicateApplication(supabase, {
+    const duplicateApplication = existingApplication ? null : await findDuplicateApplication(supabase, {
       classId,
       email: normalizedEmail,
       phone: normalizedPhone,
@@ -154,7 +154,7 @@ export async function POST(request) {
       );
     }
 
-    const { count, error: countError } = await supabase
+    const { count, error: countError } = existingApplication ? { count: 0, error: null } : await supabase
       .from("applications")
       .select("id", { count: "exact", head: true })
       .eq("class_id", classId)
@@ -217,7 +217,9 @@ export async function POST(request) {
 
     const finalClassType = classType || formatClassSnapshot(selectedClass);
 
-    const { error: insertError } = await supabase.from("applications").insert({
+    const { error: insertError } = existingApplication
+      ? await supabase.rpc("confirm_payment_reservation", { p_order_id: orderId, p_payment_key: paymentData.paymentKey || paymentKey, p_method: paymentData.method || "", p_approved_at: paymentData.approvedAt || null })
+      : await supabase.from("applications").insert({
       class_id: classId,
       name: name || "",
       phone: normalizedPhone,

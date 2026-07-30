@@ -7,7 +7,7 @@ const workspaceClassesFilePath = path.join(process.cwd(), "data", "classes.json"
 const fallbackClassesFilePath = path.join(os.tmpdir(), "goyo-studio", "classes.json");
 
 const fullSelectColumns =
-  "id, title, date, time_text, price, capacity, sort_order, is_active";
+  "id, title, date, time_text, price, capacity, sort_order, is_active, class_type";
 const legacySelectColumns = "id, title, date, price, capacity, sort_order, is_active";
 
 let resolvedClassesFilePathPromise;
@@ -72,6 +72,7 @@ function normalizeClassRecord(item, fallbackIndex = 0) {
     capacity: Number(item?.capacity || 0),
     sort_order: Number(item?.sort_order ?? fallbackIndex + 1),
     is_active: item?.is_active ?? true,
+    class_type: item?.class_type === "master" ? "master" : "individual",
   };
 }
 

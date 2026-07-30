@@ -202,6 +202,17 @@ export default function ApplyPage() {
       if (capacityData.isFull) return alert("해당 강의는 정원이 마감되었습니다.");
 
       const orderId = `goyo_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      const reservationResponse = await fetch("/api/payments/reserve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId, name, phone, email, classId: selectedClassId,
+          classType: formatClassSnapshot(selectedClass), job: formData.get("job") || "",
+          level: formData.get("level") || "", message: formData.get("message") || "",
+        }),
+      });
+      const reservation = await reservationResponse.json();
+      if (!reservationResponse.ok) throw new Error(reservation.message || "좌석 예약에 실패했습니다.");
       sessionStorage.setItem(
         `pending_payment_${orderId}`,
         JSON.stringify({

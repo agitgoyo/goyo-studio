@@ -49,6 +49,10 @@ function normalizeClassInput(item, fallbackId) {
     capacity: Number(item?.capacity || 0),
     sort_order: Number(item?.sort_order || 99),
     is_active: item?.is_active ?? true,
+    class_type: item?.class_type === "master" ? "master" : "individual",
+    bundle_class_ids: Array.isArray(item?.bundle_class_ids)
+      ? [...new Set(item.bundle_class_ids.map(String).filter(Boolean))]
+      : [],
   };
 }
 
@@ -71,9 +75,10 @@ function buildUniqueClassId(baseId, existingIds) {
 }
 
 async function updateSupabaseClass(supabase, nextItem) {
+  const { bundle_class_ids, ...classRow } = nextItem;
   const result = await supabase
     .from("classes")
-    .update(nextItem)
+    .update(classRow)
     .eq("id", nextItem.id)
     .select("id, title, date, time_text, price, capacity, sort_order, is_active")
     .single();
@@ -104,9 +109,10 @@ async function updateSupabaseClass(supabase, nextItem) {
 }
 
 async function insertSupabaseClass(supabase, nextItem) {
+  const { bundle_class_ids, ...classRow } = nextItem;
   const result = await supabase
     .from("classes")
-    .insert(nextItem)
+    .insert(classRow)
     .select("id, title, date, time_text, price, capacity, sort_order, is_active")
     .single();
 
@@ -132,6 +138,16 @@ async function insertSupabaseClass(supabase, nextItem) {
     ...legacyResult.data,
     time_text: nextItem.time_text,
   };
+}
+
+async function syncBundleItems(supabase, masterId, memberIds) {
+  await supabase.from("class_bundle_items").delete().eq("master_class_id", masterId);
+  if (memberIds.length) {
+    const { error } = await supabase.from("class_bundle_items").insert(
+      memberIds.map((member_class_id) => ({ master_class_id: masterId, member_class_id }))
+    );
+    if (error) throw error;
+  }
 }
 
 async function syncClassesFileWithSupabase(updatedItem = null, deletedId = null) {
@@ -176,6 +192,21 @@ export async function GET(request) {
 
   try {
     const classes = await readClasses();
+    if (hasSupabaseConfig()) {
+      const { data, error } = await getSupabase().from("class_bundle_items").select("master_class_id, member_class_id");
+      if (error) throw error;
+      const members = new Map();
+      for (const row of data) members.set(row.master_class_id, [...(members.get(row.master_class_id) || []), row.member_class_id]);
+      const enriched = await Promise.all(classes.map(async (item) => {
+        const { data: capacityRows, error: capacityError } = await getSupabase().rpc("get_capacity", { p_class_id: item.id });
+        if (capacityError) throw capacityError;
+        const rows = capacityRows || [];
+        return { ...item, bundle_class_ids: members.get(item.id) || [], capacity_details: rows,
+          occupied: item.class_type === "master" ? null : (rows[0]?.occupied || 0),
+          remaining: rows.length ? Math.min(...rows.map((row) => Number(row.remaining))) : 0 };
+      }));
+      return NextResponse.json(enriched);
+    }
     return NextResponse.json(classes);
   } catch (error) {
     return NextResponse.json(
@@ -200,7 +231,8 @@ export async function PUT(request) {
       !nextItem.date ||
       !nextItem.time_text ||
       !nextItem.price ||
-      !nextItem.capacity
+      (nextItem.class_type === "individual" && !nextItem.capacity) ||
+      (nextItem.class_type === "master" && !nextItem.bundle_class_ids.length)
     ) {
       return missingRequiredFields();
     }
@@ -208,6 +240,7 @@ export async function PUT(request) {
     if (hasSupabaseConfig()) {
       const supabase = getSupabase();
       const data = await updateSupabaseClass(supabase, nextItem);
+      await syncBundleItems(supabase, nextItem.id, nextItem.class_type === "master" ? nextItem.bundle_class_ids : []);
       await syncClassesFileWithSupabase(data);
       return NextResponse.json(data);
     }
@@ -256,7 +289,8 @@ export async function POST(request) {
       !nextItem.date ||
       !nextItem.time_text ||
       !nextItem.price ||
-      !nextItem.capacity
+      (nextItem.class_type === "individual" && !nextItem.capacity) ||
+      (nextItem.class_type === "master" && !nextItem.bundle_class_ids.length)
     ) {
       return missingRequiredFields();
     }
@@ -264,6 +298,7 @@ export async function POST(request) {
     if (hasSupabaseConfig()) {
       const supabase = getSupabase();
       const data = await insertSupabaseClass(supabase, nextItem);
+      await syncBundleItems(supabase, data.id, nextItem.class_type === "master" ? nextItem.bundle_class_ids : []);
       await syncClassesFileWithSupabase(data);
       return NextResponse.json(data);
     }
@@ -300,6 +335,12 @@ export async function DELETE(request) {
 
     if (hasSupabaseConfig()) {
       const supabase = getSupabase();
+      const [{ count: applications }, { count: bundleItems }, { count: masterItems }] = await Promise.all([
+        supabase.from("application_class_slots").select("*", { count: "exact", head: true }).eq("class_id", id),
+        supabase.from("class_bundle_items").select("*", { count: "exact", head: true }).eq("master_class_id", id),
+        supabase.from("class_bundle_items").select("*", { count: "exact", head: true }).eq("member_class_id", id),
+      ]);
+      if (applications || bundleItems || masterItems) return NextResponse.json({ message: "신청 또는 마스터 연결 이력이 있는 수업은 삭제할 수 없습니다. 비활성화를 사용해 주세요." }, { status: 409 });
       const { error } = await supabase.from("classes").delete().eq("id", id);
 
       if (error) {

@@ -10,6 +10,8 @@ const emptyClass = {
   capacity: 8,
   sort_order: 99,
   is_active: true,
+  class_type: "individual",
+  bundle_class_ids: [],
 };
 
 export default function AdminClassManager({ password, isActive }) {
@@ -137,7 +139,8 @@ export default function AdminClassManager({ password, isActive }) {
       !String(newClass.date || "").trim() ||
       !String(newClass.time_text || "").trim() ||
       !Number(newClass.price) ||
-      !Number(newClass.capacity)
+      (newClass.class_type !== "master" && !Number(newClass.capacity)) ||
+      (newClass.class_type === "master" && !newClass.bundle_class_ids.length)
     ) {
       setMessage("수업명, 날짜, 시간, 금액, 정원을 모두 입력해 주세요.");
       return;
@@ -203,6 +206,12 @@ export default function AdminClassManager({ password, isActive }) {
         <p style={styles.label}>NEW CLASS</p>
         <h3 style={styles.cardTitle}>새 수업 추가</h3>
 
+        <label style={styles.formLabel}>수업 유형</label>
+        <select style={styles.input} value={newClass.class_type} onChange={(event) => setNewClass({ ...newClass, class_type: event.target.value, bundle_class_ids: [] })}>
+          <option value="individual">개별 수업</option>
+          <option value="master">마스터클래스</option>
+        </select>
+
         <label style={styles.formLabel}>수업명</label>
         <input
           style={styles.input}
@@ -237,7 +246,9 @@ export default function AdminClassManager({ password, isActive }) {
           onChange={(event) => setNewClass({ ...newClass, price: event.target.value })}
         />
 
-        <label style={styles.formLabel}>정원</label>
+        {newClass.class_type === "master" ? <><label style={styles.formLabel}>포함 수업</label>{classes.filter((item) => item.class_type !== "master").map((item) => <label key={item.id} style={styles.checkboxRow}><input type="checkbox" checked={newClass.bundle_class_ids.includes(item.id)} onChange={(event) => setNewClass({ ...newClass, bundle_class_ids: event.target.checked ? [...newClass.bundle_class_ids, item.id] : newClass.bundle_class_ids.filter((id) => id !== item.id) })} />{item.title}</label>)}</> : null}
+
+        {newClass.class_type !== "master" ? <><label style={styles.formLabel}>정원</label>
         <input
           style={styles.input}
           type="number"
@@ -246,6 +257,7 @@ export default function AdminClassManager({ password, isActive }) {
             setNewClass({ ...newClass, capacity: event.target.value })
           }
         />
+        </> : <p style={styles.desc}>마스터 정원은 포함 수업의 최소 잔여석으로 자동 계산됩니다.</p>}
 
         <label style={styles.formLabel}>정렬 순서</label>
         <input
@@ -278,6 +290,11 @@ export default function AdminClassManager({ password, isActive }) {
           <div key={item.id} style={styles.classCard}>
             <p style={styles.label}>CLASS</p>
             <h3 style={styles.cardTitle}>{item.title}</h3>
+            {item.class_type === "master" ? (
+              <p style={styles.desc}>마스터클래스 · 판매 가능 {item.remaining ?? "-"}명<br />{(item.capacity_details || []).map((row) => `${row.class_id}: ${row.occupied}/${row.capacity}`).join(" · ")}</p>
+            ) : (
+              <p style={styles.desc}>실제 점유 {item.occupied ?? "-"} / {item.capacity}명 · 잔여 {item.remaining ?? "-"}명</p>
+            )}
 
             <label style={styles.formLabel}>수업명</label>
             <input
