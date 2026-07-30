@@ -8,7 +8,7 @@ const fallbackClassesFilePath = path.join(os.tmpdir(), "goyo-studio", "classes.j
 
 const fullSelectColumns =
   "id, title, date, time_text, price, capacity, sort_order, is_active, class_type";
-const legacySelectColumns = "id, title, date, price, capacity, sort_order, is_active";
+const legacySelectColumns = "id, title, date, price, capacity, sort_order, is_active, class_type";
 
 let resolvedClassesFilePathPromise;
 

@@ -95,7 +95,7 @@ async function updateSupabaseClass(supabase, nextItem) {
     .from("classes")
     .update(stripTimeText(nextItem))
     .eq("id", nextItem.id)
-    .select("id, title, date, price, capacity, sort_order, is_active")
+    .select("id, title, date, price, capacity, sort_order, is_active, class_type")
     .single();
 
   if (legacyResult.error) {
@@ -127,7 +127,7 @@ async function insertSupabaseClass(supabase, nextItem) {
   const legacyResult = await supabase
     .from("classes")
     .insert(stripTimeText(nextItem))
-    .select("id, title, date, price, capacity, sort_order, is_active")
+    .select("id, title, date, price, capacity, sort_order, is_active, class_type")
     .single();
 
   if (legacyResult.error) {

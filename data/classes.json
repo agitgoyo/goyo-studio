@@ -1,62 +1,8 @@
 [
-  {
-    "id": "실내투시도",
-    "title": "실내투시도",
-    "date": "06-26(금)",
-    "time_text": "오후 1시~6시",
-    "price": 180000,
-    "capacity": 9,
-    "sort_order": 1,
-    "is_active": true
-  },
-  {
-    "id": "왕초보반-2",
-    "title": "왕초보반",
-    "date": "07-11(토)",
-    "time_text": "오전 9시~12시",
-    "price": 120000,
-    "capacity": 8,
-    "sort_order": 2,
-    "is_active": true
-  },
-  {
-    "id": "완성도반",
-    "title": "완성도반",
-    "date": "07-11(토)",
-    "time_text": "오후 1시~4시",
-    "price": 120000,
-    "capacity": 8,
-    "sort_order": 3,
-    "is_active": true
-  },
-  {
-    "id": "투시도반",
-    "title": "투시도반",
-    "date": "06-12(금)",
-    "time_text": "오후 1시~6시",
-    "price": 180000,
-    "capacity": 8,
-    "sort_order": 99,
-    "is_active": false
-  },
-  {
-    "id": "왕초보반",
-    "title": "왕초보반",
-    "date": "06-20(토)",
-    "time_text": "오전 9시~12시",
-    "price": 120000,
-    "capacity": 9,
-    "sort_order": 99,
-    "is_active": false
-  },
-  {
-    "id": "조감도반-mpw2odt0",
-    "title": "완성도반",
-    "date": "06-20(토)",
-    "time_text": "오후 1시~4시",
-    "price": 120000,
-    "capacity": 9,
-    "sort_order": 99,
-    "is_active": false
-  }
+  { "id": "d5-basic", "title": "D5 입문반", "date": "08-22 토", "time_text": "09:00 ~ 12:00", "price": 120000, "capacity": 8, "sort_order": 1, "is_active": true, "class_type": "individual" },
+  { "id": "d5-exterior", "title": "D5 외부투시도", "date": "08-22 토", "time_text": "13:00 ~ 16:00", "price": 120000, "capacity": 8, "sort_order": 2, "is_active": true, "class_type": "individual" },
+  { "id": "d5-interior", "title": "D5 실내투시도", "date": "08-29 토", "time_text": "09:00 ~ 12:00", "price": 120000, "capacity": 8, "sort_order": 3, "is_active": true, "class_type": "individual" },
+  { "id": "d5-aerial", "title": "D5 조감도", "date": "08-29 토", "time_text": "13:00 ~ 16:00", "price": 120000, "capacity": 8, "sort_order": 4, "is_active": true, "class_type": "individual" },
+  { "id": "d5-master", "title": "D5 마스터클래스", "date": "08-22 / 08-29 토", "time_text": "총 4회 · 12시간", "price": 432000, "capacity": 0, "sort_order": 5, "is_active": true, "class_type": "master" },
+  { "id": "d5-practical", "title": "D5 실전클래스", "date": "08-22 / 08-29 토", "time_text": "총 3회 · 9시간", "price": 324000, "capacity": 0, "sort_order": 6, "is_active": true, "class_type": "master" }
 ]
