@@ -26,7 +26,22 @@ export default function AdminApplicationManager({ password, isActive }) {
   };
   return <section style={{ display: "grid", gap: 16 }}>
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><div><p style={{ color: "#d88b3a", fontWeight: 800 }}>APPLICATIONS</p><h2>신청·환불 관리</h2></div><button onClick={load}>새로고침</button></div>
-    {applications.map((item) => <article key={item.id} style={{ padding: 20, borderRadius: 16, background: "#1b1b1b", display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}><div><strong>{item.name} · {item.class_type}</strong><p style={{ color: "#cfc8ba" }}>{item.email} · {Number(item.amount || 0).toLocaleString()}원 · {item.payment_status}</p></div>{item.payment_status === "cancelled" ? <span>취소됨</span> : <button onClick={() => cancel(item)} style={{ background: "#b64b4b", color: "white", border: 0, borderRadius: 10, padding: "10px 14px" }}>좌석 복원</button>}</article>)}
+    {applications.map((item) => <article key={item.id} style={{ padding: 20, borderRadius: 16, background: "#1b1b1b", display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}><div><strong>{item.name} · {item.class_type}</strong><p style={{ color: "#cfc8ba" }}>{item.email} · {Number(item.amount || 0).toLocaleString()}원 · {item.payment_status}</p>
+      <details style={{ marginTop: 12 }}>
+        <summary style={{ cursor: "pointer", color: "#d88b3a" }}>신청서 상세보기</summary>
+        <dl style={{ display: "grid", gridTemplateColumns: "100px minmax(0, 1fr)", gap: "8px 16px", lineHeight: 1.7, overflowWrap: "anywhere" }}>
+          {[
+            ["이름", item.name], ["이메일", item.email], ["연락처", item.phone],
+            ["신청 수업", item.class_type], ["직업", item.job], ["레벨", item.level],
+            ["작성 메모", item.message], ["결제 상태", item.payment_status],
+            ["결제 금액", `${Number(item.amount || 0).toLocaleString()}원`],
+            ["결제 수단", item.method], ["주문번호", item.order_id],
+            ["결제 승인일", item.approved_at ? new Date(item.approved_at).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }) : ""],
+            ["신청일", item.created_at ? new Date(item.created_at).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }) : ""],
+          ].map(([label, value]) => <div key={label} style={{ display: "contents" }}><dt style={{ color: "#cfc8ba" }}>{label}</dt><dd style={{ margin: 0, whiteSpace: "pre-wrap" }}>{value || "미작성"}</dd></div>)}
+        </dl>
+      </details>
+    </div>{item.payment_status === "cancelled" ? <span>취소됨</span> : <button onClick={() => cancel(item)} style={{ background: "#b64b4b", color: "white", border: 0, borderRadius: 10, padding: "10px 14px" }}>좌석 복원</button>}</article>)}
     {!applications.length ? <p>신청 내역이 없습니다.</p> : null}{message ? <p>{message}</p> : null}
   </section>;
 }
