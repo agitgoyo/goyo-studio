@@ -31,6 +31,7 @@ export async function POST(request) {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams({
+          token: process.env.GOOGLE_SCRIPT_TOKEN || "",
         formType: "홈페이지 문의",
         notificationSubject: "새로운 문의가 들어왔습니다.",
         name,
