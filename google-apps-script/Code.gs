@@ -1,5 +1,9 @@
 function doPost(e) {
   const data = e.parameter;
+  const expectedToken = PropertiesService.getScriptProperties().getProperty("NOTIFICATION_TOKEN");
+  if (!expectedToken || data.token !== expectedToken) {
+    return ContentService.createTextOutput(JSON.stringify({ok: false})).setMimeType(ContentService.MimeType.JSON);
+  }
   const adminEmail = "agit.goyo@gmail.com";
 
   const formType = data.formType || "";
