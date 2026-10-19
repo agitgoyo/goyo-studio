@@ -46,6 +46,7 @@ export async function POST(request) {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
+          token: process.env.GOOGLE_SCRIPT_TOKEN || "",
           formType: "수업 후기",
           notificationSubject: "[GOYO STUDIO] 새로운 수업 후기가 도착했습니다.",
           name: normalized.data.student_name || "익명",

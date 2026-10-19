@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { formatClassSnapshot } from "@/app/lib/class-format";
 import { getClassById } from "@/app/lib/classes-store";
+import { sendApplicationNotification } from "@/app/lib/application-notifications";
 
 const db = () => createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 const phone = (value) => String(value || "").replace(/\D/g, "");
@@ -22,6 +23,13 @@ export async function POST(request) {
       const message = error.message.includes("CLASS_FULL") ? "해당 강의는 마감되었습니다." : error.message.includes("DUPLICATE") ? "이미 포함 수업을 신청하셨습니다." : error.message;
       return NextResponse.json({ message }, { status: /CLASS_FULL|DUPLICATE/.test(error.message) ? 409 : 500 });
     }
-    return NextResponse.json({ message: "수강 신청이 접수되었습니다.", orderId });
+    const notificationStatus = await sendApplicationNotification({
+      name: body.name || "", phone: phone(body.phone), email: email(body.email),
+      classType: body.classType || formatClassSnapshot(selected),
+      job: body.job || "", level: body.level || "", message: body.message || "",
+      paymentStatus: "계좌이체 신청", orderId,
+      amount: String(selected.price), method: "계좌이체 예정",
+    });
+    return NextResponse.json({ message: "수강 신청이 접수되었습니다.", orderId, notificationStatus });
   } catch (error) { return NextResponse.json({ message: error?.message || "신청 처리 중 오류가 발생했습니다." }, { status: 500 }); }
 }
