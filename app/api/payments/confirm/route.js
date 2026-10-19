@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { formatClassSnapshot } from "@/app/lib/class-format";
 import { getClassById } from "@/app/lib/classes-store";
+import { sendApplicationNotification } from "@/app/lib/application-notifications";
 
 function getSupabase() {
   return createClient(
@@ -248,43 +249,22 @@ export async function POST(request) {
       );
     }
 
-    const googleScriptUrl = process.env.GOOGLE_SCRIPT_URL;
+    const notificationStatus = await sendApplicationNotification({
+      name: existingApplication?.name || name || "",
+      phone: existingApplication?.phone || normalizedPhone,
+      email: existingApplication?.email || normalizedEmail,
+      classType: existingApplication?.class_type || finalClassType,
+      job: existingApplication?.job || job || "",
+      level: existingApplication?.level || level || "",
+      message: existingApplication?.message || message || "",
+      paymentStatus: "결제 완료",
+      orderId: paymentData.orderId || orderId,
+      amount: String(paymentData.totalAmount || amount),
+      method: paymentData.method || "",
+      approvedAt: paymentData.approvedAt || "",
+    });
 
-    if (googleScriptUrl) {
-      await fetch(googleScriptUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          formType: "강의 신청",
-          notificationSubject: "새로운 강의신청이 도착했습니다.",
-          name: name || "",
-          phone: normalizedPhone,
-          email: normalizedEmail,
-          classType: finalClassType,
-          job: job || "",
-          level: level || "",
-          message: message || "",
-          paymentStatus: "결제 완료",
-          orderId: paymentData.orderId || orderId,
-          paymentKey: paymentData.paymentKey || paymentKey,
-          amount: String(paymentData.totalAmount || amount),
-          method: paymentData.method || "",
-          approvedAt: paymentData.approvedAt || "",
-          autoReplyEnabled: "true",
-          autoReplyTo: normalizedEmail,
-          autoReplySubject:
-            "[GOYO STUDIO] 강의 신청 및 결제가 완료되었습니다.",
-          autoReplyName: name || "",
-          autoReplyFormType: "강의 신청",
-          autoReplyClassType: finalClassType,
-          autoReplyPaymentStatus: "결제 완료",
-        }),
-      });
-    }
-
-    return NextResponse.json(paymentData);
+    return NextResponse.json({ ...paymentData, notificationStatus });
   } catch (error) {
     console.error("결제 확인 API 오류:", error);
 
